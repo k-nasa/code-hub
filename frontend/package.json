@@ -1,0 +1,39 @@
+{
+  "name": "treasureapp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "firebase": "^6.3.1",
+    "firebaseui": "^4.1.0",
+    "jquery": "^3.4.1",
+    "preact": "^8.4.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "parcel-bundler": "^1.12.3"
+  },
+  "plugins": [
+    [
+      "@babel/plugin-transform-react-jsx",
+      {
+        "pragma": "h"
+      }
+    ]
+  ],
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
