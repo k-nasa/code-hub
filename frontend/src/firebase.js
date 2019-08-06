@@ -11,6 +11,7 @@ const firebaseConfig = {
 };
 
 // https://firebase.google.com/docs/auth/web/start
+// see: GitHub認証の統合 https://firebase.google.com/docs/auth/web/github-auth?hl=ja
 const githubProvider = new firebase.auth.GithubAuthProvider();
 
 const FirebaseFactory = () => {
