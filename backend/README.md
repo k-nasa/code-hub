@@ -104,3 +104,27 @@ curl localhost:1991/public
 ```console
 2019/08/06 16:40:05 Error 1045: Access denied for user 'root'@'172.18.0.1' (using password: YES)
 ```
+
+## 6. いざ開発
+
+コードを書き換える度に `go run` し直すのは面倒くさいので、書き換えるとrebuildしてくれるコマンドを用意しているので活用してください。
+
+```console
+❯ make dev-deps                     
+  GO111MODULE=off go get -u -v \
+                  github.com/oxequa/realize
+  github.com/oxequa/realize (download)
+  github.com/oxequa/interact (download)
+  github.com/fatih/color (download)
+  github.com/fsnotify/fsnotify (download)
+❯ make refresh-run
+realize start
+[18:54:53][BACKEND] : Watching 11 file/s 9 folder/s
+[18:54:53][BACKEND] : Install started
+[18:54:54][BACKEND] : Install completed in 1.671 s
+[18:54:54][BACKEND] : Running..
+[18:55:09][BACKEND] : GO changed /Users/j-chikamori/go/src/github.com/voyagegroup/treasure-app/backend/server.go
+[18:55:09][BACKEND] : Install started
+[18:55:11][BACKEND] : Install completed in 2.016 s
+[18:55:11][BACKEND] : Running..
+```
