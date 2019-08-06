@@ -13,7 +13,7 @@ docker-compose/down:
 	docker-compose down
 
 mysql:
-	mysql -u root -h localhost --protocol tcp -p
+	mysql -u root -h localhost --protocol tcp -p $(DBNAME)
 
 migrate/init:
 	mysql -u root -h localhost --protocol tcp -e "create database \`$(DBNAME)\`" -p

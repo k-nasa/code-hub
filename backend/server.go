@@ -49,7 +49,7 @@ func (s *Server) Run(addr string) {
 
 func Route(client *auth.Client, dbx *sqlx.DB) *mux.Router {
 
-	authMiddleware := middleware.NewAuthMiddleware(client)
+	authMiddleware := middleware.NewAuthMiddleware(client, dbx)
 	r := mux.NewRouter()
 	r.Handle("/public", handler.NewPublicHandler())
 	r.Handle("/private", authMiddleware.Handler(handler.NewPrivateHandler(dbx)))
