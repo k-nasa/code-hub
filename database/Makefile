@@ -4,7 +4,7 @@ DBNAME:=treasure_app
 DATASOURCE:=root:password@tcp(127.0.0.1:3306)/$(DBNAME)
 
 install:
-	which goose || go get -u github.com/pressly/goose/cmd/goose
+	which goose || GO111MODULE=off go get -u github.com/pressly/goose/cmd/goose
 
 docker-compose/up:
 	docker-compose up -d
