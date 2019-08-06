@@ -1,3 +1,5 @@
+backend/app
+
 .*
 !.gitignore
 !.env.example
