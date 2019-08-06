@@ -5,7 +5,7 @@
 `../database` に構成などが定義されているので、読んでみてください。
 
 ```console
-❯ make database-init 
+❯ make -f integration.mk database-init 
 make -C ../database init
 which goose || go get -u github.com/pressly/goose/cmd/goose
 /Users/j-chikamori/go/bin/goose
@@ -65,7 +65,7 @@ PORT=1991
 それぞれのキーについては、上記リンクを見れば大体分かる。
 
 ```console
-❯ make create-token UID=demo
+❯ make -f integration.mk create-token UID=demo
 go run ./cmd/customtoken/main.go demo
 {
   "kind": "identitytoolkit#VerifyCustomTokenResponse",
@@ -89,11 +89,11 @@ Listening on port 1991
 サーバーを立ち上げた状態で、別シェルから以下を叩く。
 
 ```console
-❯ make req-private
+❯ make -f integration.mk req-private
 curl -H "Authorization: Bearer tokenhogehoge" localhost:1991/private
 {"message":" Hello  from private endpoint! You have 0 comments"}
 
-❯ make req-public 
+❯ make -f integration.mk req-public 
 curl localhost:1991/public
 {"message":"Hello from a public endpoint! You don't need to be authenticated to see this."}
 ```
