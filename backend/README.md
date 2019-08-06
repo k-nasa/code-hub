@@ -66,7 +66,7 @@ PORT=1991
 
 ```console
 ❯ make -f integration.mk create-token UID=demo
-go run ./cmd/customtoken/main.go demo
+go run ./cmd/customtoken/main.go demo .idToken
 {
   "kind": "identitytoolkit#VerifyCustomTokenResponse",
   "idToken": "idtoken",
@@ -75,7 +75,7 @@ go run ./cmd/customtoken/main.go demo
   "isNewUser": true
 }
 
-token file created
+.IdToken created
 ```
 
 ## 5. Hello World

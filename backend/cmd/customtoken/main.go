@@ -25,13 +25,26 @@ type FirebaseCustomToken struct {
 // https://firebase.google.com/docs/auth/admin/create-custom-tokens#sign_in_using_custom_tokens_on_clients
 func main() {
 
-	if len(os.Args) != 2 {
-		log.Fatal("Need 1 argument but got ", len(os.Args)-1)
+	if len(os.Args) != 3 {
+		log.Fatal("Need 2 argument but got ", len(os.Args)-2)
 	}
 
 	uid := os.Args[1]
 	if len(uid) == 0 {
 		log.Fatal("uid flag is missing.")
+	}
+
+	if len(uid) == 0 {
+		log.Fatal("uid flag is missing.")
+	}
+
+	tokenFileName := os.Args[2]
+	if len(tokenFileName) == 0 {
+		log.Fatal("token file name flag is missing.")
+	}
+
+	if len(tokenFileName) == 0 {
+		log.Fatal("token file name flag is missing.")
 	}
 
 	err := godotenv.Load()
@@ -90,7 +103,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	file, err := os.OpenFile(".idToken", os.O_WRONLY|os.O_CREATE, 0666)
+	file, err := os.OpenFile(tokenFileName, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -101,5 +114,5 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println(string(respBytes))
-	fmt.Println("token file created")
+	fmt.Printf("%s created", tokenFileName)
 }
