@@ -55,12 +55,10 @@ func Route(client *auth.Client, dbx *sqlx.DB) *mux.Router {
 	r.Handle("/private", authMiddleware.Handler(handler.NewPrivateHandler(dbx)))
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "public/index.html")
+		http.ServeFile(w, r, "../frontend/dist/index.html")
 	})
-	r.PathPrefix("/js/").Handler(
-		http.StripPrefix("/js/", http.FileServer(http.Dir("public/js"))))
-	r.PathPrefix("/css/").Handler(
-		http.StripPrefix("/css/", http.FileServer(http.Dir("public/css"))))
+	r.PathPrefix("/").Handler(
+		http.StripPrefix("/", http.FileServer(http.Dir("../frontend/dist"))))
 
 	return r
 }
