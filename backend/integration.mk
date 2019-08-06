@@ -7,7 +7,7 @@ create-token:
 	go run ./cmd/customtoken/main.go $(UID) $(TOKEN_FILE)
 
 req-private:
-	curl -H "Authorization: Bearer $(shell cat ./.idToken)" $(HOST):$(PORT)/private
+	curl -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/private
 
 req-public:
 	curl $(HOST):$(PORT)/public

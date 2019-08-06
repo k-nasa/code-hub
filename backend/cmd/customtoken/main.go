@@ -26,7 +26,7 @@ type FirebaseCustomToken struct {
 func main() {
 
 	if len(os.Args) != 3 {
-		log.Fatal("Need 2 argument but got ", len(os.Args)-2)
+		log.Fatal("Need 2 argument but got ", len(os.Args)-1)
 	}
 
 	uid := os.Args[1]
