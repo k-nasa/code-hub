@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/joho/godotenv"
 	"github.com/voyagegroup/treasure-app/util"
@@ -13,16 +14,37 @@ import (
 	"os"
 )
 
+type FirebaseCustomToken struct {
+	Kind         string `json:"kind"`
+	IDToken      string `json:"idToken"`
+	RefreshToken string `json:"refreshToken"`
+	ExpiresIn    string `json:"expiresIn"`
+	IsNewUser    bool   `json:"isNewUser"`
+}
+
 // https://firebase.google.com/docs/auth/admin/create-custom-tokens#sign_in_using_custom_tokens_on_clients
 func main() {
 
-	if len(os.Args) != 2 {
-		log.Fatal("Need 1 argument but got ", len(os.Args)-1)
+	if len(os.Args) != 3 {
+		log.Fatal("Need 2 argument but got ", len(os.Args)-1)
 	}
 
 	uid := os.Args[1]
 	if len(uid) == 0 {
 		log.Fatal("uid flag is missing.")
+	}
+
+	if len(uid) == 0 {
+		log.Fatal("uid flag is missing.")
+	}
+
+	tokenFileName := os.Args[2]
+	if len(tokenFileName) == 0 {
+		log.Fatal("token file name flag is missing.")
+	}
+
+	if len(tokenFileName) == 0 {
+		log.Fatal("token file name flag is missing.")
 	}
 
 	err := godotenv.Load()
@@ -44,7 +66,7 @@ func main() {
 	endpoint := fmt.Sprintf("https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=%s", webapikey)
 
 	if webapikey == "" {
-		log.Fatalf("firebase Web API key is missing")
+		log.Fatal("firebase Web API key is missing")
 	}
 
 	body := []byte(fmt.Sprintf(`
@@ -75,5 +97,22 @@ func main() {
 		log.Fatal(err)
 	}
 
+
+	firebaseCustomToken := &FirebaseCustomToken{}
+	if err := json.Unmarshal(respBytes, firebaseCustomToken); err != nil {
+		log.Fatal(err)
+	}
+
+	file, err := os.OpenFile(tokenFileName, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	_, err = fmt.Fprint(file, firebaseCustomToken.IDToken)
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println(string(respBytes))
+	fmt.Printf("%s created", tokenFileName)
 }
