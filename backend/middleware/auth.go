@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"firebase.google.com/go/auth"
-	"fmt"
 	"github.com/voyagegroup/treasure-app/model"
 	"log"
 	"net/http"
@@ -32,14 +32,14 @@ func (auth *AuthMiddleware) Handler(next http.Handler) http.Handler {
 		}
 		token, err := auth.client.VerifyIDToken(r.Context(), idToken)
 		if err != nil {
-			log.Printf(err.Error())
+			log.Print(err.Error())
 			http.Error(w, "Failed to verify token", http.StatusForbidden)
 			return
 		}
 		user, err := auth.client.GetUser(r.Context(), token.UID)
 
 		if err != nil {
-			log.Printf(err.Error())
+			log.Print(err.Error())
 			http.Error(w, "Failed to get user", http.StatusInternalServerError)
 			return
 		}
@@ -57,7 +57,7 @@ func (auth *AuthMiddleware) Handler(next http.Handler) http.Handler {
 func getTokenFromHeader(req *http.Request) (string, error) {
 	header := req.Header.Get("Authorization")
 	if header == "" {
-		return "", fmt.Errorf("authorization header not found")
+		return "", errors.New("authorization header not found")
 	}
 
 	l := len(bearer)
@@ -65,5 +65,5 @@ func getTokenFromHeader(req *http.Request) (string, error) {
 		return header[l+1:], nil
 	}
 
-	return "", fmt.Errorf("authorization header format must be 'Bearer {token}'")
+	return "", errors.New("authorization header format must be 'Bearer {token}'")
 }

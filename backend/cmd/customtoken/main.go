@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/joho/godotenv"
 	"github.com/voyagegroup/treasure-app/util"
@@ -12,6 +13,14 @@ import (
 	"net/url"
 	"os"
 )
+
+type FirebaseCustomToken struct {
+	Kind         string `json:"kind"`
+	IDToken      string `json:"idToken"`
+	RefreshToken string `json:"refreshToken"`
+	ExpiresIn    string `json:"expiresIn"`
+	IsNewUser    bool   `json:"isNewUser"`
+}
 
 // https://firebase.google.com/docs/auth/admin/create-custom-tokens#sign_in_using_custom_tokens_on_clients
 func main() {
@@ -44,7 +53,7 @@ func main() {
 	endpoint := fmt.Sprintf("https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=%s", webapikey)
 
 	if webapikey == "" {
-		log.Fatalf("firebase Web API key is missing")
+		log.Fatal("firebase Web API key is missing")
 	}
 
 	body := []byte(fmt.Sprintf(`
@@ -75,5 +84,22 @@ func main() {
 		log.Fatal(err)
 	}
 
+
+	firebaseCustomToken := &FirebaseCustomToken{}
+	if err := json.Unmarshal(respBytes, firebaseCustomToken); err != nil {
+		log.Fatal(err)
+	}
+
+	file, err := os.OpenFile(".idToken", os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	_, err = fmt.Fprint(file, firebaseCustomToken.IDToken)
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println(string(respBytes))
+	fmt.Println("token file created")
 }
