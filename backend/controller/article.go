@@ -63,6 +63,7 @@ func (a *Article) Create(w http.ResponseWriter, r *http.Request) (int, interface
 		return http.StatusInternalServerError, nil, err
 	}
 	newArticle.ID = id
+
 	return http.StatusCreated, newArticle, nil
 }
 
@@ -90,6 +91,7 @@ func (a *Article) Update(w http.ResponseWriter, r *http.Request) (int, interface
 	} else if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
+
 	return http.StatusNoContent, nil, nil
 }
 
@@ -112,5 +114,6 @@ func (a *Article) Destroy(w http.ResponseWriter, r *http.Request) (int, interfac
 	} else if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
+
 	return http.StatusNoContent, nil, nil
 }

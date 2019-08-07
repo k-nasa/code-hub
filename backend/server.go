@@ -65,6 +65,7 @@ func (s *Server) Route() *mux.Router {
 	articleAuthRequired.Use(authMiddleware.Handler)
 	articleAuthRequired.Handle("", AppHandler{articleController.Create}).Methods("POST")
 	articleAuthRequired.Handle("/{id}", AppHandler{articleController.Update}).Methods("PUT")
+	articleAuthRequired.Handle("/{id}", AppHandler{articleController.Destroy}).Methods("DELETE")
 
 	articleNonAuth := r.PathPrefix("/articles").Subrouter()
 	articleNonAuth.Handle("", AppHandler{articleController.Index}).Methods("GET")

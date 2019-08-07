@@ -19,11 +19,14 @@ req-article-root:
 req-article-post:
 	@curl -XPOST -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/articles -d '{"title": "$(ARTICLE_TITLE)", "body": "$(ARTICLE_BODY)"}'
 
-req-article-edit:
+req-article-update:
 	@curl -XPUT -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/articles/$(ARTICLE_ID) -d '{"title": "$(ARTICLE_TITLE)", "body": "$(ARTICLE_BODY)"}'
 
 req-article-get:
 	@curl $(HOST):$(PORT)/articles/$(ARTICLE_ID)
+
+req-article-delete:
+	@curl -XDELETE -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/articles/$(ARTICLE_ID)
 
 req-public:
 	curl $(HOST):$(PORT)/public
