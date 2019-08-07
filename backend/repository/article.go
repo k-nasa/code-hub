@@ -2,20 +2,21 @@ package repository
 
 import (
 	"database/sql"
+
 	"github.com/jmoiron/sqlx"
-	"github.com/voyagegroup/treasure-app/domain/model"
+	model2 "github.com/voyagegroup/treasure-app/model"
 )
 
-func AllArticle(db *sqlx.DB) ([]model.Article, error) {
-	var a []model.Article
+func AllArticle(db *sqlx.DB) ([]model2.Article, error) {
+	var a []model2.Article
 	if err := db.Select(&a, `SELECT id, title, body FROM article`); err != nil {
 		return nil, err
 	}
 	return a, nil
 }
 
-func FindArticle(db *sqlx.DB, id int64) (*model.Article, error) {
-	a := model.Article{}
+func FindArticle(db *sqlx.DB, id int64) (*model2.Article, error) {
+	a := model2.Article{}
 	if err := db.Get(&a, `
 SELECT id, title, body FROM article WHERE id = ?
 `, id); err != nil {
@@ -24,7 +25,7 @@ SELECT id, title, body FROM article WHERE id = ?
 	return &a, nil
 }
 
-func CreateArticle(db *sqlx.Tx, a *model.Article) (sql.Result, error) {
+func CreateArticle(db *sqlx.Tx, a *model2.Article) (sql.Result, error) {
 	stmt, err := db.Prepare(`
 INSERT INTO article (title, body) VALUES (?, ?)
 `)
@@ -35,7 +36,7 @@ INSERT INTO article (title, body) VALUES (?, ?)
 	return stmt.Exec(a.Title, a.Body)
 }
 
-func UpdateArticle(db *sqlx.Tx, id int64, a *model.Article) (sql.Result, error) {
+func UpdateArticle(db *sqlx.Tx, id int64, a *model2.Article) (sql.Result, error) {
 	stmt, err := db.Prepare(`
 UPDATE article SET title = ?, body = ? WHERE id = ?
 `)

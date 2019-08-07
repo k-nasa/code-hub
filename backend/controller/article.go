@@ -3,13 +3,15 @@ package controller
 import (
 	"database/sql"
 	"encoding/json"
+
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
-	"github.com/voyagegroup/treasure-app/domain/model"
-	"github.com/voyagegroup/treasure-app/domain/repository"
-	"github.com/voyagegroup/treasure-app/domain/service"
 	"github.com/voyagegroup/treasure-app/httputil"
+	model2 "github.com/voyagegroup/treasure-app/model"
+	repository2 "github.com/voyagegroup/treasure-app/repository"
+	service2 "github.com/voyagegroup/treasure-app/service"
+
 	"net/http"
 	"strconv"
 )
@@ -23,7 +25,7 @@ func NewArticle(dbx *sqlx.DB) *Article {
 }
 
 func (a *Article) Index(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
-	articles, err := repository.AllArticle(a.dbx)
+	articles, err := repository2.AllArticle(a.dbx)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
@@ -42,7 +44,7 @@ func (a *Article) Show(w http.ResponseWriter, r *http.Request) (int, interface{}
 		return http.StatusBadRequest, nil, err
 	}
 
-	article, err := repository.FindArticle(a.dbx, aid)
+	article, err := repository2.FindArticle(a.dbx, aid)
 	if err != nil && err == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
 	} else if err != nil {
@@ -53,12 +55,12 @@ func (a *Article) Show(w http.ResponseWriter, r *http.Request) (int, interface{}
 }
 
 func (a *Article) Create(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
-	newArticle := &model.Article{}
+	newArticle := &model2.Article{}
 	if err := json.NewDecoder(r.Body).Decode(&newArticle); err != nil {
 		return http.StatusBadRequest, nil, err
 	}
 
-	articleService := service.NewArticleService(a.dbx)
+	articleService := service2.NewArticleService(a.dbx)
 	id, err := articleService.Create(newArticle)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
@@ -80,12 +82,12 @@ func (a *Article) Update(w http.ResponseWriter, r *http.Request) (int, interface
 		return http.StatusBadRequest, nil, err
 	}
 
-	reqArticle := &model.Article{}
+	reqArticle := &model2.Article{}
 	if err := json.NewDecoder(r.Body).Decode(&reqArticle); err != nil {
 		return http.StatusBadRequest, nil, err
 	}
 
-	articleService := service.NewArticleService(a.dbx)
+	articleService := service2.NewArticleService(a.dbx)
 	err = articleService.Update(aid, reqArticle)
 	if err != nil && errors.Cause(err) == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
@@ -108,7 +110,7 @@ func (a *Article) Destroy(w http.ResponseWriter, r *http.Request) (int, interfac
 		return http.StatusBadRequest, nil, err
 	}
 
-	articleService := service.NewArticleService(a.dbx)
+	articleService := service2.NewArticleService(a.dbx)
 	err = articleService.Destroy(aid)
 	if err != nil && errors.Cause(err) == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err

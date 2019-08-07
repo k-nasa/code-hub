@@ -5,12 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/voyagegroup/treasure-app/domain/model"
-	"github.com/voyagegroup/treasure-app/domain/repository"
-	"github.com/voyagegroup/treasure-app/httputil"
-
 	"firebase.google.com/go/auth"
 	"github.com/jmoiron/sqlx"
+	"github.com/voyagegroup/treasure-app/httputil"
+	"github.com/voyagegroup/treasure-app/model"
+	"github.com/voyagegroup/treasure-app/repository"
 )
 
 const (
