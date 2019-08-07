@@ -9,6 +9,9 @@ create-token:
 req-private:
 	curl -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/private
 
+req-article-root:
+	curl -v -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/article
+
 req-public:
 	curl $(HOST):$(PORT)/public
 

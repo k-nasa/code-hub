@@ -1,15 +1,12 @@
 -- +goose Up
-CREATE TABLE user (
+CREATE TABLE article (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  firebase_uid VARCHAR(255) NOT NULL,
-  email VARCHAR(255),
-  display_name VARCHAR(255),
-  photo_url VARCHAR(255),
+  title VARCHAR(255) NOT NULL DEFAULT '',
+  body TEXT,
   ctime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   utime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  UNIQUE KEY `firebase_uid` (`firebase_uid`)
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- +goose Down
-DROP TABLE user;
+DROP TABLE article;

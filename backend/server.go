@@ -1,16 +1,18 @@
 package server
 
 import (
-	"firebase.google.com/go/auth"
 	"fmt"
+	"net/http"
+
+	"firebase.google.com/go/auth"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/cors"
+	"github.com/voyagegroup/treasure-app/controller"
 	db2 "github.com/voyagegroup/treasure-app/db"
 	"github.com/voyagegroup/treasure-app/handler"
 	"github.com/voyagegroup/treasure-app/middleware"
 	"github.com/voyagegroup/treasure-app/util"
-	"net/http"
 )
 
 type Server struct {
@@ -53,6 +55,11 @@ func Route(client *auth.Client, dbx *sqlx.DB) *mux.Router {
 	r := mux.NewRouter()
 	r.Handle("/public", handler.NewPublicHandler())
 	r.Handle("/private", authMiddleware.Handler(handler.NewPrivateHandler(dbx)))
+
+	articleController := controller.NewArticle(dbx)
+	article := r.PathPrefix("/article").Subrouter()
+	article.Use(authMiddleware.Handler)
+	article.Handle("", AppHandler{articleController.Root})
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "../frontend/dist/index.html")
