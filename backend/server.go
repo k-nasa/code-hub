@@ -2,8 +2,10 @@ package server
 
 import (
 	"fmt"
+	"github.com/gorilla/handlers"
 	"log"
 	"net/http"
+	"os"
 
 	"firebase.google.com/go/auth"
 	"github.com/gorilla/mux"
@@ -49,7 +51,8 @@ func (s *Server) Run(addr string) {
 	})
 	h := c.Handler(s.router)
 	log.Printf("Listening on port %s", addr)
-	if err := http.ListenAndServe(fmt.Sprintf(":%s", addr), h); err != nil {
+	err := http.ListenAndServe(fmt.Sprintf(":%s", addr), handlers.LoggingHandler(os.Stdout, h))
+	if err != nil {
 		panic(err)
 	}
 }
@@ -57,19 +60,21 @@ func (s *Server) Run(addr string) {
 func (s *Server) Route() *mux.Router {
 	authMiddleware := middleware.NewAuthMiddleware(s.authClient, s.dbx)
 	r := mux.NewRouter()
-	r.Handle("/public", handler.NewPublicHandler())
-	r.Handle("/private", authMiddleware.Handler(handler.NewPrivateHandler(s.dbx)))
+	publicHandler := r.PathPrefix("/public").Subrouter()
+	publicHandler.Methods("GET").Path("").Handler(handler.NewPublicHandler())
+
+	privateHandler := r.PathPrefix("/private").Subrouter()
+	privateHandler.Use(authMiddleware.Handler())
+	privateHandler.Methods("GET").Path("").Handler(handler.NewPrivateHandler(s.dbx))
 
 	articleController := controller.NewArticle(s.dbx)
-	articleAuthRequired := r.PathPrefix("/articles").Subrouter()
-	articleAuthRequired.Use(authMiddleware.Handler)
-	articleAuthRequired.Methods("POST").Path("").Handler(AppHandler{articleController.Create})
-	articleAuthRequired.Methods("PUT").Path("/{id}").Handler(AppHandler{articleController.Update})
-	articleAuthRequired.Methods("DELETE").Path("/{id}").Handler(AppHandler{articleController.Destroy})
-
-	articleNonAuth := r.PathPrefix("/articles").Subrouter()
-	articleNonAuth.Methods("GET").Path("").Handler(AppHandler{articleController.Index})
-	articleNonAuth.Methods("GET").Path("/{id}").Handler(AppHandler{articleController.Show})
+	articleHandler := r.PathPrefix("/articles").Subrouter()
+	articleHandler.Use(authMiddleware.Handler())
+	articleHandler.Methods("POST").Path("").Handler(AppHandler{articleController.Create})
+	articleHandler.Methods("PUT").Path("/{id}").Handler(AppHandler{articleController.Update})
+	articleHandler.Methods("DELETE").Path("/{id}").Handler(AppHandler{articleController.Destroy})
+	articleHandler.Methods("GET").Path("").Handler(AppHandler{articleController.Index})
+	articleHandler.Methods("GET").Path("/{id}").Handler(AppHandler{articleController.Show})
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "../frontend/dist/index.html")

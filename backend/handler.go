@@ -24,7 +24,6 @@ func (a AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}()
 	status, res, err := a.h(w, r)
 	if err != nil {
-		log.Printf("error: %s", err)
 		respondError(w, status, err)
 		return
 	}
@@ -47,7 +46,6 @@ func respondJSON(w http.ResponseWriter, status int, payload interface{}) {
 
 // respondError レスポンスとして返すエラーを生成する
 func respondError(w http.ResponseWriter, code int, err error) {
-	log.Printf("err: %v", err)
 	if e, ok := err.(*httputil.HTTPError); ok {
 		respondJSON(w, e.Code, e)
 	} else if err != nil {
