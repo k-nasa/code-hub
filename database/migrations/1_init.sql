@@ -1,11 +1,15 @@
 -- +goose Up
-CREATE TABLE comment (
+CREATE TABLE user (
   id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  content VARCHAR(255) NOT NULL,
-  user_uid VARCHAR(255) NOT NULL,
+  firebase_uid VARCHAR(255) NOT NULL,
+  email VARCHAR(255),
+  display_name VARCHAR(255),
+  photo_url VARCHAR(255),
   ctime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (id)
+  utime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY `firebase_uid` (`firebase_uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- +goose Down
-DROP TABLE comment;
+DROP TABLE user;

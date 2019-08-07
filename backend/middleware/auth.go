@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"firebase.google.com/go/auth"
+	"github.com/jmoiron/sqlx"
 	"github.com/voyagegroup/treasure-app/model"
 	"log"
 	"net/http"
@@ -15,11 +16,13 @@ const (
 
 type AuthMiddleware struct {
 	client *auth.Client
+	db     *sqlx.DB
 }
 
-func NewAuthMiddleware(client *auth.Client) *AuthMiddleware {
+func NewAuthMiddleware(client *auth.Client, db *sqlx.DB) *AuthMiddleware {
 	return &AuthMiddleware{
 		client: client,
+		db:     db,
 	}
 }
 
@@ -44,12 +47,15 @@ func (auth *AuthMiddleware) Handler(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), model.UserContextKey, model.User{
-			FirebaseUID: user.UID,
-			Email:       user.Email,
-			DisplayName: user.DisplayName,
-			PhotoURL:    user.PhotoURL,
-		})
+		u := toUser(user)
+		_, syncErr := model.SyncUser(auth.db, u)
+		if syncErr != nil {
+			log.Print(syncErr.Error())
+			http.Error(w, "Failed to sync user", http.StatusInternalServerError)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), model.UserContextKey, u)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -66,4 +72,13 @@ func getTokenFromHeader(req *http.Request) (string, error) {
 	}
 
 	return "", errors.New("authorization header format must be 'Bearer {token}'")
+}
+
+func toUser(u *auth.UserRecord) model.User {
+	return model.User{
+		FirebaseUID: u.UID,
+		Email:       u.Email,
+		PhotoURL:    u.PhotoURL,
+		DisplayName: u.DisplayName,
+	}
 }
