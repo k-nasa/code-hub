@@ -60,6 +60,7 @@ func (s *Server) Run(addr string) {
 func (s *Server) Route() *mux.Router {
 	authMiddleware := middleware.NewAuthMiddleware(s.authClient, s.dbx)
 	r := mux.NewRouter()
+
 	publicHandler := r.PathPrefix("/public").Subrouter()
 	publicHandler.Methods("GET").Path("").Handler(handler.NewPublicHandler())
 
