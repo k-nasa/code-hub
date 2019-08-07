@@ -7,6 +7,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 	"github.com/voyagegroup/treasure-app/domain/model"
+	"github.com/voyagegroup/treasure-app/domain/repository"
 	"github.com/voyagegroup/treasure-app/domain/service"
 	"github.com/voyagegroup/treasure-app/httputil"
 	"net/http"
@@ -22,7 +23,7 @@ func NewArticle(dbx *sqlx.DB) *Article {
 }
 
 func (a *Article) Index(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
-	articles, err := model.AllArticle(a.dbx)
+	articles, err := repository.AllArticle(a.dbx)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
@@ -41,7 +42,7 @@ func (a *Article) Show(w http.ResponseWriter, r *http.Request) (int, interface{}
 		return http.StatusBadRequest, nil, err
 	}
 
-	article, err := model.FindArticle(a.dbx, aid)
+	article, err := repository.FindArticle(a.dbx, aid)
 	if err != nil && err == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
 	} else if err != nil {

@@ -2,12 +2,14 @@ package middleware
 
 import (
 	"errors"
+	"github.com/voyagegroup/treasure-app/domain/model"
+	"github.com/voyagegroup/treasure-app/domain/repository"
+	"github.com/voyagegroup/treasure-app/httputil"
 	"log"
 	"net/http"
 
 	"firebase.google.com/go/auth"
 	"github.com/jmoiron/sqlx"
-	"github.com/voyagegroup/treasure-app/domain/model"
 )
 
 const (
@@ -48,14 +50,14 @@ func (auth *AuthMiddleware) Handler(next http.Handler) http.Handler {
 		}
 
 		u := toUser(user)
-		_, syncErr := model.SyncUser(auth.db, &u)
+		_, syncErr := repository.SyncUser(auth.db, &u)
 		if syncErr != nil {
 			log.Print(syncErr.Error())
 			http.Error(w, "Failed to sync user", http.StatusInternalServerError)
 			return
 		}
 
-		ctx := model.SetUserToContext(r.Context(), &u)
+		ctx := httputil.SetUserToContext(r.Context(), &u)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

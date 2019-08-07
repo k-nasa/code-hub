@@ -1,20 +1,21 @@
-package model
+package repository
 
 import (
 	"context"
+	"github.com/voyagegroup/treasure-app/domain/model"
 	"testing"
 )
 
 func TestUserContextValue(t *testing.T) {
 	ctx := context.Background()
-	u := &User{
+	u := &model.User{
 		"firebaseUID",
 		"DisplayName",
 		"Email",
 		"PhotoURL",
 	}
-	ctx = SetUserToContext(ctx, u)
-	getu, err := GetUserFromContext(ctx)
+	ctx = model.SetUserToContext(ctx, u)
+	getu, err := model.GetUserFromContext(ctx)
 	if err != nil {
 		t.Fatalf("%d: invalid Show User ContextValue", err)
 	}
