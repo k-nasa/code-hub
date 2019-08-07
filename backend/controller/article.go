@@ -21,15 +21,15 @@ func NewArticle(dbx *sqlx.DB) *Article {
 	return &Article{dbx: dbx}
 }
 
-func (a *Article) Root(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
-	articles, err := model.ListArticle(a.dbx)
+func (a *Article) Index(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+	articles, err := model.AllArticle(a.dbx)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
 	return http.StatusOK, articles, nil
 }
 
-func (a *Article) Get(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+func (a *Article) Show(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
 	vars := mux.Vars(r)
 	id, ok := vars["id"]
 	if !ok {
@@ -41,7 +41,7 @@ func (a *Article) Get(w http.ResponseWriter, r *http.Request) (int, interface{},
 		return http.StatusBadRequest, nil, err
 	}
 
-	article, err := model.GetArticle(a.dbx, aid)
+	article, err := model.FindArticle(a.dbx, aid)
 	if err != nil && err == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
 	} else if err != nil {
@@ -51,12 +51,12 @@ func (a *Article) Get(w http.ResponseWriter, r *http.Request) (int, interface{},
 	return http.StatusCreated, article, nil
 }
 
-func (a *Article) New(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+func (a *Article) Create(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
 	article := &model.Article{}
 	if err := json.NewDecoder(r.Body).Decode(&article); err != nil {
 		return http.StatusBadRequest, nil, err
 	}
-	result, err := model.Insert(a.dbx, article)
+	result, err := model.CreateArticle(a.dbx, article)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
@@ -68,7 +68,7 @@ func (a *Article) New(w http.ResponseWriter, r *http.Request) (int, interface{},
 	return http.StatusCreated, article, nil
 }
 
-func (a *Article) Edit(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+func (a *Article) Update(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
 	vars := mux.Vars(r)
 	id, ok := vars["id"]
 	if !ok {
@@ -86,11 +86,24 @@ func (a *Article) Edit(w http.ResponseWriter, r *http.Request) (int, interface{}
 	}
 
 	articleService := service.NewArticleService(a.dbx)
-	_, err = articleService.Update(aid, reqArticle)
+	_, err = articleService.UpdateArticle(aid, reqArticle)
 	if err != nil && errors.Cause(err) == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
 	} else if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
 	return http.StatusNoContent, nil, nil
+}
+
+func (a *Article) Destroy(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		return http.StatusBadRequest, nil, &httputil.HTTPError{Message: "invalid path parameter"}
+	}
+
+	aid, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return http.StatusBadRequest, nil, err
+	}
 }

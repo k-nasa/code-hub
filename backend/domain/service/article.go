@@ -15,12 +15,12 @@ func NewArticleService(dbx *sqlx.DB) *ArticleService {
 	return &ArticleService{dbx}
 }
 
-func (a *ArticleService) Update(id int64, newArticle *model.Article) (sql.Result, error) {
-	_, err := model.GetArticle(a.dbx, id)
+func (a *ArticleService) UpdateArticle(id int64, newArticle *model.Article) (sql.Result, error) {
+	_, err := model.FindArticle(a.dbx, id)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed article repository")
 	}
-	result, err := model.Update(a.dbx, id, newArticle)
+	result, err := model.UpdateArticle(a.dbx, id, newArticle)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed article repository")
 	}

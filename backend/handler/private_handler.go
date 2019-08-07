@@ -29,7 +29,7 @@ func (h *PrivateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	user, err := model.GetUser(h.dbx, contextUser.FirebaseUID)
 	if err != nil {
-		log.Printf("Get user failed: %s", err)
+		log.Printf("Show user failed: %s", err)
 		util.WriteJSON(nil, w, http.StatusInternalServerError)
 		return
 	}
