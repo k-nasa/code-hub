@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"firebase.google.com/go/auth"
@@ -16,25 +17,29 @@ import (
 )
 
 type Server struct {
-	dbx    *sqlx.DB
-	router *mux.Router
+	dbx        *sqlx.DB
+	router     *mux.Router
+	authClient *auth.Client
 }
 
-func NewServer(datasource string) (*Server, error) {
+func NewServer() *Server {
+	return &Server{}
+}
+
+func (s *Server) Init(datasource string) {
 	authClient, err := util.InitAuthClient()
 	if err != nil {
-		return nil, err
+		log.Fatalf("failed init auth client. %s", err)
 	}
+	s.authClient = authClient
 
 	db := db2.NewDb(datasource)
 	dbx, err := db.Open()
 	if err != nil {
-		return nil, err
+		log.Fatalf("failed db init. %s", err)
 	}
-
-	return &Server{
-		router: Route(authClient, dbx),
-	}, nil
+	s.dbx = dbx
+	s.router = s.Route()
 }
 
 func (s *Server) Run(addr string) {
@@ -49,17 +54,21 @@ func (s *Server) Run(addr string) {
 	}
 }
 
-func Route(client *auth.Client, dbx *sqlx.DB) *mux.Router {
-
-	authMiddleware := middleware.NewAuthMiddleware(client, dbx)
+func (s *Server) Route() *mux.Router {
+	authMiddleware := middleware.NewAuthMiddleware(s.authClient, s.dbx)
 	r := mux.NewRouter()
 	r.Handle("/public", handler.NewPublicHandler())
-	r.Handle("/private", authMiddleware.Handler(handler.NewPrivateHandler(dbx)))
+	r.Handle("/private", authMiddleware.Handler(handler.NewPrivateHandler(s.dbx)))
 
-	articleController := controller.NewArticle(dbx)
-	article := r.PathPrefix("/article").Subrouter()
-	article.Use(authMiddleware.Handler)
-	article.Handle("", AppHandler{articleController.Root})
+	articleController := controller.NewArticle(s.dbx)
+	articleAuthRequired := r.PathPrefix("/articles").Subrouter()
+	articleAuthRequired.Use(authMiddleware.Handler)
+	articleAuthRequired.Handle("", AppHandler{articleController.New}).Methods("POST")
+	articleAuthRequired.Handle("/{id}", AppHandler{articleController.Edit}).Methods("PUT")
+
+	articleNonAuth := r.PathPrefix("/articles").Subrouter()
+	articleNonAuth.Handle("", AppHandler{articleController.Root}).Methods("GET")
+	articleNonAuth.Handle("/{id}", AppHandler{articleController.Get}).Methods("GET")
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "../frontend/dist/index.html")

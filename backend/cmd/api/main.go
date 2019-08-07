@@ -18,9 +18,7 @@ func main() {
 		log.Fatal("Cannot get datasource for database")
 	}
 
-	s, err := server.NewServer(datasource)
-	if err != nil {
-		log.Fatalf("failed to init server: %s", err)
-	}
+	s := server.NewServer()
+	s.Init(datasource)
 	s.Run(os.Getenv("PORT"))
 }

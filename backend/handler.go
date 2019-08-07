@@ -34,7 +34,7 @@ func (a AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // respondJSON レスポンスとして返すjsonを生成して、writerに書き込む
 func respondJSON(w http.ResponseWriter, status int, payload interface{}) {
-	response, err := json.MarshalIndent(payload, "", "    ")
+	response, err := json.Marshal(payload)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
