@@ -2,11 +2,12 @@ package handler
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/voyagegroup/treasure-app/model"
 	"github.com/voyagegroup/treasure-app/util"
-	"log"
-	"net/http"
 )
 
 type PrivateHandler struct {
@@ -20,7 +21,13 @@ func NewPrivateHandler(dbx *sqlx.DB) *PrivateHandler {
 }
 
 func (h *PrivateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	user, err := model.GetUser(h.dbx, model.GetUserFromContext(r).FirebaseUID)
+	contextUser, err := model.GetUserFromContext(r.Context())
+	if err != nil {
+		log.Print(err)
+		util.WriteJSON(nil, w, http.StatusInternalServerError)
+		return
+	}
+	user, err := model.GetUser(h.dbx, contextUser.FirebaseUID)
 	if err != nil {
 		log.Printf("Get user failed: %s", err)
 		util.WriteJSON(nil, w, http.StatusInternalServerError)
