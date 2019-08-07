@@ -58,7 +58,7 @@ func (a *Article) Create(w http.ResponseWriter, r *http.Request) (int, interface
 	}
 
 	articleService := service.NewArticleService(a.dbx)
-	id, err := articleService.CreateArticle(newArticle)
+	id, err := articleService.Create(newArticle)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
@@ -84,7 +84,7 @@ func (a *Article) Update(w http.ResponseWriter, r *http.Request) (int, interface
 	}
 
 	articleService := service.NewArticleService(a.dbx)
-	err = articleService.UpdateArticle(aid, reqArticle)
+	err = articleService.Update(aid, reqArticle)
 	if err != nil && errors.Cause(err) == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
 	} else if err != nil {
@@ -106,7 +106,7 @@ func (a *Article) Destroy(w http.ResponseWriter, r *http.Request) (int, interfac
 	}
 
 	articleService := service.NewArticleService(a.dbx)
-	err = articleService.DestroyArticle(aid)
+	err = articleService.Destroy(aid)
 	if err != nil && errors.Cause(err) == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
 	} else if err != nil {

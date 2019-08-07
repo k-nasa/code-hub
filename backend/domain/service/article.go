@@ -15,7 +15,7 @@ func NewArticleService(dbx *sqlx.DB) *ArticleService {
 	return &ArticleService{dbx}
 }
 
-func (a *ArticleService) UpdateArticle(id int64, newArticle *model.Article) error {
+func (a *ArticleService) Update(id int64, newArticle *model.Article) error {
 	_, err := model.FindArticle(a.dbx, id)
 	if err != nil {
 		return errors.Wrap(err, "failed find article")
@@ -36,7 +36,7 @@ func (a *ArticleService) UpdateArticle(id int64, newArticle *model.Article) erro
 	return nil
 }
 
-func (a *ArticleService) DestroyArticle(id int64) error {
+func (a *ArticleService) Destroy(id int64) error {
 	_, err := model.FindArticle(a.dbx, id)
 	if err != nil {
 		return errors.Wrap(err, "failed find article")
@@ -57,7 +57,7 @@ func (a *ArticleService) DestroyArticle(id int64) error {
 	return nil
 }
 
-func (a *ArticleService) CreateArticle(newArticle *model.Article) (int64, error) {
+func (a *ArticleService) Create(newArticle *model.Article) (int64, error) {
 	var createdId int64
 	if err := util.TXHandler(a.dbx, func(tx *sqlx.Tx) error {
 		result, err := model.CreateArticle(tx, newArticle)
@@ -74,7 +74,7 @@ func (a *ArticleService) CreateArticle(newArticle *model.Article) (int64, error)
 		createdId = id
 		return err
 	}); err != nil {
-		return 0, errors.Wrap(err, "failed article delete transaction")
+		return 0, errors.Wrap(err, "failed article insert transaction")
 	}
 	return createdId, nil
 }
