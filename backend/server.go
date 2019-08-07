@@ -63,13 +63,13 @@ func (s *Server) Route() *mux.Router {
 	articleController := controller.NewArticle(s.dbx)
 	articleAuthRequired := r.PathPrefix("/articles").Subrouter()
 	articleAuthRequired.Use(authMiddleware.Handler)
-	articleAuthRequired.Handle("", AppHandler{articleController.Create}).Methods("POST")
-	articleAuthRequired.Handle("/{id}", AppHandler{articleController.Update}).Methods("PUT")
-	articleAuthRequired.Handle("/{id}", AppHandler{articleController.Destroy}).Methods("DELETE")
+	articleAuthRequired.Methods("POST").Path("").Handler(AppHandler{articleController.Create})
+	articleAuthRequired.Methods("PUT").Path("/{id}").Handler(AppHandler{articleController.Update})
+	articleAuthRequired.Methods("DELETE").Path("/{id}").Handler(AppHandler{articleController.Destroy})
 
 	articleNonAuth := r.PathPrefix("/articles").Subrouter()
-	articleNonAuth.Handle("", AppHandler{articleController.Index}).Methods("GET")
-	articleNonAuth.Handle("/{id}", AppHandler{articleController.Show}).Methods("GET")
+	articleNonAuth.Methods("GET").Path("").Handler(AppHandler{articleController.Index})
+	articleNonAuth.Methods("GET").Path("/{id}").Handler(AppHandler{articleController.Show})
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "../frontend/dist/index.html")
