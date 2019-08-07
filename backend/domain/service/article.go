@@ -9,20 +9,20 @@ import (
 )
 
 type ArticleService struct {
-	dbx *sqlx.DB
+	db *sqlx.DB
 }
 
-func NewArticleService(dbx *sqlx.DB) *ArticleService {
-	return &ArticleService{dbx}
+func NewArticleService(db *sqlx.DB) *ArticleService {
+	return &ArticleService{db}
 }
 
 func (a *ArticleService) Update(id int64, newArticle *model.Article) error {
-	_, err := repository.FindArticle(a.dbx, id)
+	_, err := repository.FindArticle(a.db, id)
 	if err != nil {
 		return errors.Wrap(err, "failed find article")
 	}
 
-	if err := util.TXHandler(a.dbx, func(tx *sqlx.Tx) error {
+	if err := util.TXHandler(a.db, func(tx *sqlx.Tx) error {
 		_, err := repository.UpdateArticle(tx, id, newArticle)
 		if err != nil {
 			return err
@@ -38,12 +38,12 @@ func (a *ArticleService) Update(id int64, newArticle *model.Article) error {
 }
 
 func (a *ArticleService) Destroy(id int64) error {
-	_, err := repository.FindArticle(a.dbx, id)
+	_, err := repository.FindArticle(a.db, id)
 	if err != nil {
 		return errors.Wrap(err, "failed find article")
 	}
 
-	if err := util.TXHandler(a.dbx, func(tx *sqlx.Tx) error {
+	if err := util.TXHandler(a.db, func(tx *sqlx.Tx) error {
 		_, err := repository.DestroyArticle(tx, id)
 		if err != nil {
 			return err
@@ -60,7 +60,7 @@ func (a *ArticleService) Destroy(id int64) error {
 
 func (a *ArticleService) Create(newArticle *model.Article) (int64, error) {
 	var createdId int64
-	if err := util.TXHandler(a.dbx, func(tx *sqlx.Tx) error {
+	if err := util.TXHandler(a.db, func(tx *sqlx.Tx) error {
 		result, err := repository.CreateArticle(tx, newArticle)
 		if err != nil {
 			return err

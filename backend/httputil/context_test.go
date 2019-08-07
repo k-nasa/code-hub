@@ -1,4 +1,4 @@
-package repository
+package httputil
 
 import (
 	"context"
@@ -14,8 +14,8 @@ func TestUserContextValue(t *testing.T) {
 		"Email",
 		"PhotoURL",
 	}
-	ctx = model.SetUserToContext(ctx, u)
-	getu, err := model.GetUserFromContext(ctx)
+	ctx = SetUserToContext(ctx, u)
+	getu, err := GetUserFromContext(ctx)
 	if err != nil {
 		t.Fatalf("%d: invalid Show User ContextValue", err)
 	}

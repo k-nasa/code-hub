@@ -7,9 +7,9 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func GetUser(dbx Execer, uid string) (*model.User, error) {
+func GetUser(db *sqlx.DB, uid string) (*model.User, error) {
 	var u model.User
-	if err := dbx.Get(&u, `
+	if err := db.Get(&u, `
 select firebase_uid, display_name, email, photo_url from user where firebase_uid = ? limit 1
 	`, uid); err != nil {
 		return nil, err

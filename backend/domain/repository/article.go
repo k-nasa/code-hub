@@ -6,17 +6,17 @@ import (
 	"github.com/voyagegroup/treasure-app/domain/model"
 )
 
-func AllArticle(dbx *sqlx.DB) ([]model.Article, error) {
+func AllArticle(db *sqlx.DB) ([]model.Article, error) {
 	var a []model.Article
-	if err := dbx.Select(&a, `SELECT id, title, body FROM article`); err != nil {
+	if err := db.Select(&a, `SELECT id, title, body FROM article`); err != nil {
 		return nil, err
 	}
 	return a, nil
 }
 
-func FindArticle(dbx *sqlx.DB, id int64) (*model.Article, error) {
+func FindArticle(db *sqlx.DB, id int64) (*model.Article, error) {
 	a := model.Article{}
-	if err := dbx.Get(&a, `
+	if err := db.Get(&a, `
 SELECT id, title, body FROM article WHERE id = ?
 `, id); err != nil {
 		return nil, err
