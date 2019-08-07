@@ -3,8 +3,9 @@ package service
 import (
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
-	model2 "github.com/voyagegroup/treasure-app/model"
-	repository2 "github.com/voyagegroup/treasure-app/repository"
+
+	"github.com/voyagegroup/treasure-app/model"
+	"github.com/voyagegroup/treasure-app/repository"
 	"github.com/voyagegroup/treasure-app/util"
 )
 
@@ -16,14 +17,14 @@ func NewArticleService(db *sqlx.DB) *ArticleService {
 	return &ArticleService{db}
 }
 
-func (a *ArticleService) Update(id int64, newArticle *model2.Article) error {
-	_, err := repository2.FindArticle(a.db, id)
+func (a *ArticleService) Update(id int64, newArticle *model.Article) error {
+	_, err := repository.FindArticle(a.db, id)
 	if err != nil {
 		return errors.Wrap(err, "failed find article")
 	}
 
 	if err := util.TXHandler(a.db, func(tx *sqlx.Tx) error {
-		_, err := repository2.UpdateArticle(tx, id, newArticle)
+		_, err := repository.UpdateArticle(tx, id, newArticle)
 		if err != nil {
 			return err
 		}
@@ -38,13 +39,13 @@ func (a *ArticleService) Update(id int64, newArticle *model2.Article) error {
 }
 
 func (a *ArticleService) Destroy(id int64) error {
-	_, err := repository2.FindArticle(a.db, id)
+	_, err := repository.FindArticle(a.db, id)
 	if err != nil {
 		return errors.Wrap(err, "failed find article")
 	}
 
 	if err := util.TXHandler(a.db, func(tx *sqlx.Tx) error {
-		_, err := repository2.DestroyArticle(tx, id)
+		_, err := repository.DestroyArticle(tx, id)
 		if err != nil {
 			return err
 		}
@@ -58,10 +59,10 @@ func (a *ArticleService) Destroy(id int64) error {
 	return nil
 }
 
-func (a *ArticleService) Create(newArticle *model2.Article) (int64, error) {
+func (a *ArticleService) Create(newArticle *model.Article) (int64, error) {
 	var createdId int64
 	if err := util.TXHandler(a.db, func(tx *sqlx.Tx) error {
-		result, err := repository2.CreateArticle(tx, newArticle)
+		result, err := repository.CreateArticle(tx, newArticle)
 		if err != nil {
 			return err
 		}

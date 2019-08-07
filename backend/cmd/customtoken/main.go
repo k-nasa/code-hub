@@ -5,13 +5,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/joho/godotenv"
-	"github.com/voyagegroup/treasure-app/util"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/voyagegroup/treasure-app/util"
 )
 
 type FirebaseCustomToken struct {
@@ -80,7 +81,7 @@ func main() {
 	values.Set("token", token)
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(body))
 	if err != nil {
-		log.Fatalf( "error minting custom token: %v\n", err)
+		log.Fatalf("error minting custom token: %v\n", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -96,7 +97,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 
 	firebaseCustomToken := &FirebaseCustomToken{}
 	if err := json.Unmarshal(respBytes, firebaseCustomToken); err != nil {

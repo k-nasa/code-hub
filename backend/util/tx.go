@@ -2,10 +2,11 @@ package util
 
 import (
 	"fmt"
-	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
 	"log"
 	"net/http"
+
+	"github.com/jmoiron/sqlx"
+	"github.com/pkg/errors"
 )
 
 // TXHandler is handler for working with transaction.

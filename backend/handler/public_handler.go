@@ -1,8 +1,9 @@
 package handler
 
 import (
-	"github.com/voyagegroup/treasure-app/util"
 	"net/http"
+
+	"github.com/voyagegroup/treasure-app/util"
 )
 
 type PublicHandler struct{}
