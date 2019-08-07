@@ -75,19 +75,16 @@ func (s *Server) Route() *mux.Router {
 	)
 
 	r := mux.NewRouter()
-	publicHandler := r.PathPrefix("/public").Subrouter()
-	publicHandler.Methods(http.MethodGet).Path("").Handler(commonChain.Then(handler.NewPublicHandler()))
 
-	privateHandler := r.PathPrefix("/private").Subrouter()
-	privateHandler.Methods(http.MethodGet).Path("").Handler(authChain.Then(handler.NewPrivateHandler(s.dbx)))
+	r.Methods(http.MethodGet).Path("/public").Handler(commonChain.Then(handler.NewPublicHandler()))
+	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(handler.NewPrivateHandler(s.dbx)))
 
 	articleController := controller.NewArticle(s.dbx)
-	articleRouter := r.PathPrefix("/articles").Subrouter()
-	articleRouter.Methods(http.MethodPost).Path("").Handler(authChain.Then(AppHandler{articleController.Create}))
-	articleRouter.Methods(http.MethodPut).Path("/{id}").Handler(authChain.Then(AppHandler{articleController.Update}))
-	articleRouter.Methods(http.MethodDelete).Path("/{id}").Handler(authChain.Then(AppHandler{articleController.Destroy}))
-	articleRouter.Methods(http.MethodGet).Path("").Handler(commonChain.Then(AppHandler{articleController.Index}))
-	articleRouter.Methods(http.MethodGet).Path("/{id}").Handler(commonChain.Then(AppHandler{articleController.Show}))
+	r.Methods(http.MethodPost).Path("/articles").Handler(authChain.Then(AppHandler{articleController.Create}))
+	r.Methods(http.MethodPut).Path("/articles/{id}").Handler(authChain.Then(AppHandler{articleController.Update}))
+	r.Methods(http.MethodDelete).Path("/articles/{id}").Handler(authChain.Then(AppHandler{articleController.Destroy}))
+	r.Methods(http.MethodGet).Path("/articles").Handler(commonChain.Then(AppHandler{articleController.Index}))
+	r.Methods(http.MethodGet).Path("/articles/{id}").Handler(commonChain.Then(AppHandler{articleController.Show}))
 
 	fileServeRouter := r.PathPrefix("/").Subrouter()
 	fileServeRouter.Use(commonChain.Then)
