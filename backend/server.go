@@ -75,7 +75,6 @@ func (s *Server) Route() *mux.Router {
 	)
 
 	r := mux.NewRouter()
-
 	r.Methods(http.MethodGet).Path("/public").Handler(commonChain.Then(handler.NewPublicHandler()))
 	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(handler.NewPrivateHandler(s.dbx)))
 
