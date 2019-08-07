@@ -62,21 +62,20 @@ func (s *Server) Route() *mux.Router {
 	r := mux.NewRouter()
 
 	publicHandler := r.PathPrefix("/public").Subrouter()
-	publicHandler.Methods("GET").Path("").Handler(handler.NewPublicHandler())
+	publicHandler.Methods(http.MethodGet).Path("").Handler(handler.NewPublicHandler())
 
 	privateHandler := r.PathPrefix("/private").Subrouter()
 	privateHandler.Use(authMiddleware.Handler())
-	privateHandler.Methods("GET").Path("").Handler(handler.NewPrivateHandler(s.dbx))
+	privateHandler.Methods(http.MethodGet).Path("").Handler(handler.NewPrivateHandler(s.dbx))
 
 	articleController := controller.NewArticle(s.dbx)
 	articleHandler := r.PathPrefix("/articles").Subrouter()
 	articleHandler.Use(authMiddleware.Handler())
-	articleHandler.Methods("POST").Path("").Handler(AppHandler{articleController.Create})
-	articleHandler.Methods("PUT").Path("/{id}").Handler(AppHandler{articleController.Update})
-	articleHandler.Methods("DELETE").Path("/{id}").Handler(AppHandler{articleController.Destroy})
-	articleHandler.Methods("GET").Path("").Handler(AppHandler{articleController.Index})
-	articleHandler.Methods("GET").Path("/{id}").Handler(AppHandler{articleController.Show})
-
+	articleHandler.Methods(http.MethodPost).Path("").Handler(AppHandler{articleController.Create})
+	articleHandler.Methods(http.MethodPut).Path("/{id}").Handler(AppHandler{articleController.Update})
+	articleHandler.Methods(http.MethodDelete).Path("/{id}").Handler(AppHandler{articleController.Destroy})
+	articleHandler.Methods(http.MethodGet).Path("").Handler(AppHandler{articleController.Index})
+	articleHandler.Methods(http.MethodGet).Path("/{id}").Handler(AppHandler{articleController.Show})
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "../frontend/dist/index.html")
 	})
