@@ -19,8 +19,8 @@ type User struct {
 	PhotoURL    string `db:"photo_url"`
 }
 
-func SetUserToContext(parents context.Context, u *User) context.Context {
-	return context.WithValue(parents, UserContextKey, u)
+func SetUserToContext(ctx context.Context, u *User) context.Context {
+	return context.WithValue(ctx, UserContextKey, u)
 }
 
 func GetUserFromContext(ctx context.Context) (*User, error) {
