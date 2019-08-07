@@ -33,6 +33,3 @@ req-public:
 
 database-init:
 	make -C ../database init
-
-article-test-data:
-	mysql -u root -h localhost --protocol tcp -e "use treasure_app; INSERT INTO treasure_app.article (title, body, ctime, utime) VALUES ('title', 'body', DEFAULT, DEFAULT)" -p
