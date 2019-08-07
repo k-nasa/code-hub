@@ -52,20 +52,18 @@ func (a *Article) Show(w http.ResponseWriter, r *http.Request) (int, interface{}
 }
 
 func (a *Article) Create(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
-	article := &model.Article{}
-	if err := json.NewDecoder(r.Body).Decode(&article); err != nil {
+	newArticle := &model.Article{}
+	if err := json.NewDecoder(r.Body).Decode(&newArticle); err != nil {
 		return http.StatusBadRequest, nil, err
 	}
-	result, err := model.CreateArticle(a.dbx, article)
+
+	articleService := service.NewArticleService(a.dbx)
+	id, err := articleService.CreateArticle(newArticle)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
-	id, err := result.LastInsertId()
-	if err != nil {
-		return http.StatusInternalServerError, nil, err
-	}
-	article.ID = id
-	return http.StatusCreated, article, nil
+	newArticle.ID = id
+	return http.StatusCreated, newArticle, nil
 }
 
 func (a *Article) Update(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
@@ -86,7 +84,7 @@ func (a *Article) Update(w http.ResponseWriter, r *http.Request) (int, interface
 	}
 
 	articleService := service.NewArticleService(a.dbx)
-	_, err = articleService.UpdateArticle(aid, reqArticle)
+	err = articleService.UpdateArticle(aid, reqArticle)
 	if err != nil && errors.Cause(err) == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
 	} else if err != nil {
@@ -106,4 +104,13 @@ func (a *Article) Destroy(w http.ResponseWriter, r *http.Request) (int, interfac
 	if err != nil {
 		return http.StatusBadRequest, nil, err
 	}
+
+	articleService := service.NewArticleService(a.dbx)
+	err = articleService.DestroyArticle(aid)
+	if err != nil && errors.Cause(err) == sql.ErrNoRows {
+		return http.StatusNotFound, nil, err
+	} else if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+	return http.StatusNoContent, nil, nil
 }
