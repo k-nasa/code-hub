@@ -2,10 +2,11 @@ package handler
 
 import (
 	"fmt"
-	"github.com/voyagegroup/treasure-app/domain/repository"
-	"github.com/voyagegroup/treasure-app/httputil"
 	"log"
 	"net/http"
+
+	"github.com/voyagegroup/treasure-app/httputil"
+	"github.com/voyagegroup/treasure-app/repository"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/voyagegroup/treasure-app/util"

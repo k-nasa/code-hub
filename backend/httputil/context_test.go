@@ -2,17 +2,18 @@ package httputil
 
 import (
 	"context"
-	"github.com/voyagegroup/treasure-app/domain/model"
 	"testing"
+
+	"github.com/voyagegroup/treasure-app/model"
 )
 
 func TestUserContextValue(t *testing.T) {
 	ctx := context.Background()
 	u := &model.User{
-		"firebaseUID",
-		"DisplayName",
-		"Email",
-		"PhotoURL",
+		FirebaseUID: "firebaseUID",
+		DisplayName: "DisplayName",
+		Email:       "Email",
+		PhotoURL:    "PhotoURL",
 	}
 	ctx = SetUserToContext(ctx, u)
 	getu, err := GetUserFromContext(ctx)

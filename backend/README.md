@@ -90,7 +90,7 @@ Listening on port 1991
 
 ```console
 ❯ make -f integration.mk req-private
-curl -H "Authorization: Bearer tokenhogehoge" localhost:1991/private
+curl -H "Authorization: Bearer tokenhogehoge" localhost:1991/api/private
 {"message":" Hello  from private endpoint! You have 0 comments"}
 
 ❯ make -f integration.mk req-public 

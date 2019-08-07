@@ -74,7 +74,8 @@ func (s *Server) Route() *mux.Router {
 		authMiddleware.Handler,
 	)
 
-	r := mux.NewRouter()
+	router := mux.NewRouter()
+	r := router.PathPrefix("/api").Subrouter()
 	r.Methods(http.MethodGet).Path("/public").Handler(commonChain.Then(handler.NewPublicHandler()))
 	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(handler.NewPrivateHandler(s.dbx)))
 
