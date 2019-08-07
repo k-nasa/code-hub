@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/voyagegroup/treasure-app/model"
+	"github.com/voyagegroup/treasure-app/domain/model"
 	"github.com/voyagegroup/treasure-app/util"
 )
 

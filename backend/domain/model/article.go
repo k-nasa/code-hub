@@ -43,7 +43,7 @@ INSERT INTO article (title, body) VALUES (?, ?)
 	return result, nil
 }
 
-func Update(db *sqlx.DB, a *Article) (sql.Result, error) {
+func Update(db *sqlx.DB, id int64, a *Article) (sql.Result, error) {
 	stmt, err := db.Prepare(`
 UPDATE article SET title = ?, body = ? WHERE id = ?
 `)
@@ -51,5 +51,5 @@ UPDATE article SET title = ?, body = ? WHERE id = ?
 		return nil, err
 	}
 	defer stmt.Close()
-	return stmt.Exec(a.Title, a.Body, a.ID)
+	return stmt.Exec(a.Title, a.Body, id)
 }

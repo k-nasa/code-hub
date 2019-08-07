@@ -7,7 +7,7 @@ import (
 
 	"firebase.google.com/go/auth"
 	"github.com/jmoiron/sqlx"
-	"github.com/voyagegroup/treasure-app/model"
+	"github.com/voyagegroup/treasure-app/domain/model"
 )
 
 const (

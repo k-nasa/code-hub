@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
+	"github.com/pkg/errors"
+	"github.com/voyagegroup/treasure-app/domain/model"
+	"github.com/voyagegroup/treasure-app/domain/service"
 	"github.com/voyagegroup/treasure-app/httputil"
-	"github.com/voyagegroup/treasure-app/model"
 	"net/http"
 	"strconv"
 )
@@ -78,24 +80,16 @@ func (a *Article) Edit(w http.ResponseWriter, r *http.Request) (int, interface{}
 		return http.StatusBadRequest, nil, err
 	}
 
-	article, err := model.GetArticle(a.dbx, aid)
-	if err != nil && err == sql.ErrNoRows {
-		return http.StatusNotFound, nil, err
-	} else if err != nil {
-		return http.StatusInternalServerError, nil, err
-	}
-
 	reqArticle := &model.Article{}
-	if err := json.NewDecoder(r.Body).Decode(&article); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&reqArticle); err != nil {
 		return http.StatusBadRequest, nil, err
 	}
 
-	article.ID = aid
-	article.Body = reqArticle.Body
-	article.Title = reqArticle.Title
-
-	_, err = model.Update(a.dbx, article)
-	if err != nil {
+	articleService := service.NewArticleService(a.dbx)
+	_, err = articleService.Update(aid, reqArticle)
+	if err != nil && errors.Cause(err) == sql.ErrNoRows {
+		return http.StatusNotFound, nil, err
+	} else if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
 	return http.StatusNoContent, nil, nil
