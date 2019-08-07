@@ -2,9 +2,7 @@ package server
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
-	"runtime/debug"
 
 	"github.com/voyagegroup/treasure-app/httputil"
 )
@@ -14,14 +12,6 @@ type AppHandler struct {
 }
 
 func (a AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	defer func() {
-		if rv := recover(); rv != nil {
-			debug.PrintStack()
-			log.Printf("panic: %s", rv)
-			http.Error(w, http.StatusText(
-				http.StatusInternalServerError), http.StatusInternalServerError)
-		}
-	}()
 	status, res, err := a.h(w, r)
 	if err != nil {
 		respondErrorJson(w, status, err)

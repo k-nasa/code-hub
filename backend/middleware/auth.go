@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"errors"
+	"log"
+	"net/http"
+
 	"github.com/voyagegroup/treasure-app/domain/model"
 	"github.com/voyagegroup/treasure-app/domain/repository"
 	"github.com/voyagegroup/treasure-app/httputil"
-	"log"
-	"net/http"
 
 	"firebase.google.com/go/auth"
 	"github.com/jmoiron/sqlx"
@@ -28,40 +29,38 @@ func NewAuthMiddleware(client *auth.Client, db *sqlx.DB) *AuthMiddleware {
 	}
 }
 
-func (auth *AuthMiddleware) Handler() func(http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			idToken, err := getTokenFromHeader(r)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusBadRequest)
-				return
-			}
-			token, err := auth.client.VerifyIDToken(r.Context(), idToken)
-			if err != nil {
-				log.Print(err.Error())
-				http.Error(w, "Failed to verify token", http.StatusForbidden)
-				return
-			}
-			user, err := auth.client.GetUser(r.Context(), token.UID)
+func (auth *AuthMiddleware) Handler(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		idToken, err := getTokenFromHeader(r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		token, err := auth.client.VerifyIDToken(r.Context(), idToken)
+		if err != nil {
+			log.Print(err.Error())
+			http.Error(w, "Failed to verify token", http.StatusForbidden)
+			return
+		}
+		user, err := auth.client.GetUser(r.Context(), token.UID)
 
-			if err != nil {
-				log.Print(err.Error())
-				http.Error(w, "Failed to get user", http.StatusInternalServerError)
-				return
-			}
+		if err != nil {
+			log.Print(err.Error())
+			http.Error(w, "Failed to get user", http.StatusInternalServerError)
+			return
+		}
 
-			u := toUser(user)
-			_, syncErr := repository.SyncUser(auth.db, &u)
-			if syncErr != nil {
-				log.Print(syncErr.Error())
-				http.Error(w, "Failed to sync user", http.StatusInternalServerError)
-				return
-			}
+		u := toUser(user)
+		_, syncErr := repository.SyncUser(auth.db, &u)
+		if syncErr != nil {
+			log.Print(syncErr.Error())
+			http.Error(w, "Failed to sync user", http.StatusInternalServerError)
+			return
+		}
 
-			ctx := httputil.SetUserToContext(r.Context(), &u)
-			next.ServeHTTP(w, r.WithContext(ctx))
-		})
-	}
+		ctx := httputil.SetUserToContext(r.Context(), &u)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
 
 func getTokenFromHeader(req *http.Request) (string, error) {

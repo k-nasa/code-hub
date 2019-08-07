@@ -2,10 +2,13 @@ package server
 
 import (
 	"fmt"
-	"github.com/gorilla/handlers"
+
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/handlers"
+	"github.com/justinas/alice"
 
 	"firebase.google.com/go/auth"
 	"github.com/gorilla/mux"
@@ -45,13 +48,11 @@ func (s *Server) Init(datasource string) {
 }
 
 func (s *Server) Run(addr string) {
-	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedHeaders: []string{"Authorization"},
-	})
-	h := c.Handler(s.router)
 	log.Printf("Listening on port %s", addr)
-	err := http.ListenAndServe(fmt.Sprintf(":%s", addr), handlers.LoggingHandler(os.Stdout, h))
+	err := http.ListenAndServe(
+		fmt.Sprintf(":%s", addr),
+		handlers.LoggingHandler(os.Stdout, s.router),
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -59,27 +60,41 @@ func (s *Server) Run(addr string) {
 
 func (s *Server) Route() *mux.Router {
 	authMiddleware := middleware.NewAuthMiddleware(s.authClient, s.dbx)
-	r := mux.NewRouter()
+	corsMiddleware := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedHeaders: []string{"Authorization"},
+	})
 
+	commonChain := alice.New(
+		middleware.RecoverMiddleware,
+		corsMiddleware.Handler,
+	)
+
+	authChain := commonChain.Append(
+		authMiddleware.Handler,
+	)
+
+	r := mux.NewRouter()
 	publicHandler := r.PathPrefix("/public").Subrouter()
-	publicHandler.Methods(http.MethodGet).Path("").Handler(handler.NewPublicHandler())
+	publicHandler.Methods(http.MethodGet).Path("").Handler(commonChain.Then(handler.NewPublicHandler()))
 
 	privateHandler := r.PathPrefix("/private").Subrouter()
-	privateHandler.Use(authMiddleware.Handler())
-	privateHandler.Methods(http.MethodGet).Path("").Handler(handler.NewPrivateHandler(s.dbx))
+	privateHandler.Methods(http.MethodGet).Path("").Handler(authChain.Then(handler.NewPrivateHandler(s.dbx)))
 
 	articleController := controller.NewArticle(s.dbx)
-	articleHandler := r.PathPrefix("/articles").Subrouter()
-	articleHandler.Use(authMiddleware.Handler())
-	articleHandler.Methods(http.MethodPost).Path("").Handler(AppHandler{articleController.Create})
-	articleHandler.Methods(http.MethodPut).Path("/{id}").Handler(AppHandler{articleController.Update})
-	articleHandler.Methods(http.MethodDelete).Path("/{id}").Handler(AppHandler{articleController.Destroy})
-	articleHandler.Methods(http.MethodGet).Path("").Handler(AppHandler{articleController.Index})
-	articleHandler.Methods(http.MethodGet).Path("/{id}").Handler(AppHandler{articleController.Show})
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	articleRouter := r.PathPrefix("/articles").Subrouter()
+	articleRouter.Methods(http.MethodPost).Path("").Handler(authChain.Then(AppHandler{articleController.Create}))
+	articleRouter.Methods(http.MethodPut).Path("/{id}").Handler(authChain.Then(AppHandler{articleController.Update}))
+	articleRouter.Methods(http.MethodDelete).Path("/{id}").Handler(authChain.Then(AppHandler{articleController.Destroy}))
+	articleRouter.Methods(http.MethodGet).Path("").Handler(commonChain.Then(AppHandler{articleController.Index}))
+	articleRouter.Methods(http.MethodGet).Path("/{id}").Handler(commonChain.Then(AppHandler{articleController.Show}))
+
+	fileServeRouter := r.PathPrefix("/").Subrouter()
+	fileServeRouter.Use(commonChain.Then)
+	fileServeRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "../frontend/dist/index.html")
 	})
-	r.PathPrefix("/").Handler(
+	fileServeRouter.PathPrefix("/").Handler(
 		http.StripPrefix("/", http.FileServer(http.Dir("../frontend/dist"))))
 
 	return r
