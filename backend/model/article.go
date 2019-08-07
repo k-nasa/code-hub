@@ -45,7 +45,7 @@ INSERT INTO article (title, body) VALUES (?, ?)
 
 func Update(db *sqlx.DB, a *Article) (sql.Result, error) {
 	stmt, err := db.Prepare(`
-UPDATE article SET title = ?, body = ? WHERE id = ?)
+UPDATE article SET title = ?, body = ? WHERE id = ?
 `)
 	if err != nil {
 		return nil, err

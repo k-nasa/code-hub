@@ -38,20 +38,20 @@ func (a *Article) Get(w http.ResponseWriter, r *http.Request) (int, interface{},
 	if err != nil {
 		return http.StatusBadRequest, nil, err
 	}
+
 	article, err := model.GetArticle(a.dbx, aid)
 	if err != nil && err == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
 	} else if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
+
 	return http.StatusCreated, article, nil
 }
 
 func (a *Article) New(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
-	decoder := json.NewDecoder(r.Body)
 	article := &model.Article{}
-	err := decoder.Decode(&article)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&article); err != nil {
 		return http.StatusBadRequest, nil, err
 	}
 	result, err := model.Insert(a.dbx, article)
@@ -67,11 +67,36 @@ func (a *Article) New(w http.ResponseWriter, r *http.Request) (int, interface{},
 }
 
 func (a *Article) Edit(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
-	decoder := json.NewDecoder(r.Body)
-	article := &model.Article{}
-	err := decoder.Decode(&article)
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		return http.StatusBadRequest, nil, &httputil.HTTPError{Message: "invalid path parameter"}
+	}
+
+	aid, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return http.StatusBadRequest, nil, err
 	}
-	return http.StatusCreated, nil, nil
+
+	article, err := model.GetArticle(a.dbx, aid)
+	if err != nil && err == sql.ErrNoRows {
+		return http.StatusNotFound, nil, err
+	} else if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	reqArticle := &model.Article{}
+	if err := json.NewDecoder(r.Body).Decode(&article); err != nil {
+		return http.StatusBadRequest, nil, err
+	}
+
+	article.ID = aid
+	article.Body = reqArticle.Body
+	article.Title = reqArticle.Title
+
+	_, err = model.Update(a.dbx, article)
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+	return http.StatusNoContent, nil, nil
 }
