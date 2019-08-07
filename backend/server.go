@@ -48,7 +48,7 @@ func (s *Server) Run(addr string) {
 		AllowedHeaders: []string{"Authorization"},
 	})
 	h := c.Handler(s.router)
-	fmt.Printf("Listening on port %s", addr)
+	log.Printf("Listening on port %s", addr)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", addr), h); err != nil {
 		panic(err)
 	}

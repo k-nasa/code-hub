@@ -8,14 +8,17 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.Ldate + log.Ltime + log.Lshortfile)
+	log.SetOutput(os.Stdout)
+
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("error loading .env file")
+		log.Fatalf("error loading .env file. %s", err)
 	}
 
 	datasource := os.Getenv("DATABASE_DATASOURCE")
 	if datasource == "" {
-		log.Fatal("Cannot get datasource for database")
+		log.Fatal("Cannot get datasource for database.")
 	}
 
 	s := server.NewServer()
