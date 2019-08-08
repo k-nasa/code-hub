@@ -19,12 +19,12 @@ migrate/init:
 	mysql -u root -h localhost --protocol tcp -e "create database \`$(DBNAME)\`" -p
 
 migrate/status:
-	goose -dir migrations mysql "$(DATASOURCE)" status
+	@goose -dir migrations mysql "$(DATASOURCE)" status
 
 migrate/up:
-	goose -dir migrations mysql "$(DATASOURCE)" up
+	@goose -dir migrations mysql "$(DATASOURCE)" up
 
 __migrate/down:
-	goose -dir migrations mysql "$(DATASOURCE)" down
+	@goose -dir migrations mysql "$(DATASOURCE)" down
 
 init: install docker-compose/up migrate/init migrate/up
