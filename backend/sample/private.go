@@ -1,4 +1,4 @@
-package handler
+package sample
 
 import (
 	"fmt"
@@ -9,7 +9,6 @@ import (
 	"github.com/voyagegroup/treasure-app/repository"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/voyagegroup/treasure-app/util"
 )
 
 type PrivateHandler struct {
@@ -26,17 +25,17 @@ func (h *PrivateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	contextUser, err := httputil.GetUserFromContext(r.Context())
 	if err != nil {
 		log.Print(err)
-		util.WriteJSON(nil, w, http.StatusInternalServerError)
+		WriteJSON(nil, w, http.StatusInternalServerError)
 		return
 	}
 	user, err := repository.GetUser(h.dbx, contextUser.FirebaseUID)
 	if err != nil {
 		log.Printf("Show user failed: %s", err)
-		util.WriteJSON(nil, w, http.StatusInternalServerError)
+		WriteJSON(nil, w, http.StatusInternalServerError)
 		return
 	}
-	resp := util.Response{
+	resp := Response{
 		Message: fmt.Sprintf("Hello %s from private endpoint! Your firebase uuid is %s", user.DisplayName, user.FirebaseUID),
 	}
-	util.WriteJSON(resp, w, http.StatusOK)
+	WriteJSON(resp, w, http.StatusOK)
 }
