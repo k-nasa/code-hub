@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"github.com/voyagegroup/treasure-app/sample"
 
 	"log"
 	"net/http"
@@ -16,9 +17,8 @@ import (
 	"github.com/rs/cors"
 	"github.com/voyagegroup/treasure-app/controller"
 	db2 "github.com/voyagegroup/treasure-app/db"
-	"github.com/voyagegroup/treasure-app/handler"
 	"github.com/voyagegroup/treasure-app/middleware"
-	"github.com/voyagegroup/treasure-app/util"
+	"github.com/voyagegroup/treasure-app/fbutil"
 )
 
 type Server struct {
@@ -32,7 +32,7 @@ func NewServer() *Server {
 }
 
 func (s *Server) Init(datasource string) {
-	authClient, err := util.InitAuthClient()
+	authClient, err := fbutil.InitAuthClient()
 	if err != nil {
 		log.Fatalf("failed init auth client. %s", err)
 	}
@@ -75,8 +75,8 @@ func (s *Server) Route() *mux.Router {
 	)
 
 	r := mux.NewRouter()
-	r.Methods(http.MethodGet).Path("/public").Handler(commonChain.Then(handler.NewPublicHandler()))
-	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(handler.NewPrivateHandler(s.dbx)))
+	r.Methods(http.MethodGet).Path("/public").Handler(commonChain.Then(sample.NewPublicHandler()))
+	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(sample.NewPrivateHandler(s.dbx)))
 
 	articleController := controller.NewArticle(s.dbx)
 	r.Methods(http.MethodPost).Path("/articles").Handler(authChain.Then(AppHandler{articleController.Create}))
