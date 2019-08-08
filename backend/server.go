@@ -74,8 +74,7 @@ func (s *Server) Route() *mux.Router {
 		authMiddleware.Handler,
 	)
 
-	router := mux.NewRouter()
-	r := router.PathPrefix("/api").Subrouter()
+	r := mux.NewRouter()
 	r.Methods(http.MethodGet).Path("/public").Handler(commonChain.Then(handler.NewPublicHandler()))
 	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(handler.NewPrivateHandler(s.dbx)))
 
@@ -86,13 +85,6 @@ func (s *Server) Route() *mux.Router {
 	r.Methods(http.MethodGet).Path("/articles").Handler(commonChain.Then(AppHandler{articleController.Index}))
 	r.Methods(http.MethodGet).Path("/articles/{id}").Handler(commonChain.Then(AppHandler{articleController.Show}))
 
-	fileServeRouter := r.PathPrefix("/").Subrouter()
-	fileServeRouter.Use(commonChain.Then)
-	fileServeRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "../frontend/dist/index.html")
-	})
-	fileServeRouter.PathPrefix("/").Handler(
-		http.StripPrefix("/", http.FileServer(http.Dir("../frontend/dist"))))
-
+	r.PathPrefix("").Handler(commonChain.Then(http.StripPrefix("/img", http.FileServer(http.Dir("./img")))))
 	return r
 }

@@ -11,25 +11,28 @@ create-token:
 	go run ./cmd/customtoken/main.go $(UID) $(TOKEN_FILE)
 
 req-articles:
-	@curl $(HOST):$(PORT)/api/articles
+	curl -v $(HOST):$(PORT)/articles
+
+req-img-pei:
+	curl -v $(HOST):$(PORT)/img/pei.png
 
 req-articles-get:
-	@curl $(HOST):$(PORT)/api/articles/$(ARTICLE_ID)
+	curl -v $(HOST):$(PORT)/articles/$(ARTICLE_ID)
 
 req-articles-post:
-	@curl -XPOST -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/api/articles -d '{"title": "$(ARTICLE_TITLE)", "body": "$(ARTICLE_BODY)"}'
+	curl -v -XPOST -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/articles -d '{"title": "$(ARTICLE_TITLE)", "body": "$(ARTICLE_BODY)"}'
 
 req-articles-update:
-	@curl -XPUT -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/api/articles/$(ARTICLE_ID) -d '{"title": "$(ARTICLE_TITLE)", "body": "$(ARTICLE_BODY)"}'
+	curl -v -XPUT -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/articles/$(ARTICLE_ID) -d '{"title": "$(ARTICLE_TITLE)", "body": "$(ARTICLE_BODY)"}'
 
 req-articles-delete:
-	@curl -XDELETE -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/api/articles/$(ARTICLE_ID)
+	curl -v -XDELETE -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/articles/$(ARTICLE_ID)
 
 req-public:
-	curl $(HOST):$(PORT)/api/public
+	curl -v $(HOST):$(PORT)/public
 
 req-private:
-	curl -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/api/private
+	curl -v -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/private
 
 database-init:
 	make -C ../database init
