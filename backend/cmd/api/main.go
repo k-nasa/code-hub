@@ -1,26 +1,28 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
-	server "github.com/voyagegroup/treasure-app"
 	"log"
 	"os"
+
+	"github.com/joho/godotenv"
+	server "github.com/voyagegroup/treasure-app"
 )
 
 func main() {
+	log.SetFlags(log.Ldate + log.Ltime + log.Lshortfile)
+	log.SetOutput(os.Stdout)
+
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("error loading .env file")
+		log.Fatalf("error loading .env file. %s", err)
 	}
 
 	datasource := os.Getenv("DATABASE_DATASOURCE")
 	if datasource == "" {
-		log.Fatal("Cannot get datasource for database")
+		log.Fatal("Cannot get datasource for database.")
 	}
 
-	s, err := server.NewServer(datasource)
-	if err != nil {
-		log.Fatalf("failed to init server: %s", err)
-	}
+	s := server.NewServer()
+	s.Init(datasource)
 	s.Run(os.Getenv("PORT"))
 }

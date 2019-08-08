@@ -5,21 +5,25 @@
 `../database` に構成などが定義されているので、読んでみてください。
 
 ```console
-❯ make -f integration.mk database-init 
+❯ make -f integration.mk database-init
 make -C ../database init
-which goose || go get -u github.com/pressly/goose/cmd/goose
+which goose || GO111MODULE=off go get -u github.com/pressly/goose/cmd/goose
 /Users/j-chikamori/go/bin/goose
 docker-compose up -d
-Starting treasure-app-db ... done
+ptreasure-app-db is up-to-date
 mysql -u root -h localhost --protocol tcp -e "create database \`treasure_app\`" -p
-Enter password: passwordとタイプする
+Enter password:
 goose -dir migrations mysql "root:password@tcp(127.0.0.1:3306)/treasure_app" up
-2019/08/06 17:02:55 OK    1_init.sql
-2019/08/06 17:02:55 goose: no migrations to run. current version: 1
+2019/08/08 11:29:17 OK    1_init.sql
+2019/08/08 11:29:18 OK    2_article.sql
+2019/08/08 11:29:18 goose: no migrations to run. current version: 2
 ```
 
-**portが被っている時**  
+**エラー起きたら**  
+- ポート被り  
 `lsof -i :3306` で portを既に使ってるプロセス探して、 `kill` してしまおう
+- `Lost connection to MySQL server`  
+とかって出たら、まだmysql起動してないだけなので、もう一回やってみよう
 
 ## 2. Firebase プロジェクト作成
 
@@ -27,6 +31,10 @@ goose -dir migrations mysql "root:password@tcp(127.0.0.1:3306)/treasure_app" up
     1. Google アナリティクスはなしでおｋ
     
 ## 3. 設定ファイル準備(.env)
+
+**make init**
+
+設定ファイルをコピーする。
 
 ```console
 ❯ make init            
@@ -36,7 +44,7 @@ cp .env.example .env
 **Firebase API Key**
 
 1. [Firebase](https://firebase.google.com/) のプロジェクトページを開く
-1. `Project Overview` の右にある `⚙(歯車)` ボタンを押して、プロジェクトの設定へ遷移
+1. `Project Overview` の右にある `⚙(歯車)` ボタンを押して、 `プロジェクトの設定` へ遷移
 1. `ウェブ API キー` をコピーして、`.env` ファイルの `FIREBASE_WEB_API_KEY` に設定する
 
 ```
@@ -81,20 +89,52 @@ go run ./cmd/customtoken/main.go demo .idToken
 ## 5. Hello World
 
 ```console
-❯ make run          
+❯ make run
 go run cmd/api/main.go
-Listening on port 1991
+2019/08/08 11:32:47 server.go:51: Listening on port 1991
 ```
 
 サーバーを立ち上げた状態で、別シェルから以下を叩く。
 
 ```console
 ❯ make -f integration.mk req-private
-curl -H "Authorization: Bearer tokenhogehoge" localhost:1991/private
-{"message":" Hello  from private endpoint! You have 0 comments"}
+curl -v -H "Authorization: Bearer Hoge" localhost:1991/private
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 1991 (#0)
+> GET /private HTTP/1.1
+> Host: localhost:1991
+> User-Agent: curl/7.54.0
+> Accept: */*
+> Authorization: Bearer Hoge 
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Vary: Origin
+< Date: Thu, 08 Aug 2019 02:33:22 GMT
+< Content-Length: 70
+<
+* Connection #0 to host localhost left intact
+{"message":"Hello  from private endpoint! Your firebase uuid is demo"}
 
-❯ make -f integration.mk req-public 
-curl localhost:1991/public
+
+❯ make -f integration.mk req-public
+curl -v localhost:1991/public
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 1991 (#0)
+> GET /public HTTP/1.1
+> Host: localhost:1991
+> User-Agent: curl/7.54.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Vary: Origin
+< Date: Thu, 08 Aug 2019 02:33:32 GMT
+< Content-Length: 91
+<
+* Connection #0 to host localhost left intact
 {"message":"Hello from a public endpoint! You don't need to be authenticated to see this."}
 ```
 
@@ -119,12 +159,9 @@ curl localhost:1991/public
   github.com/fsnotify/fsnotify (download)
 ❯ make refresh-run
 realize start
-[18:54:53][BACKEND] : Watching 11 file/s 9 folder/s
-[18:54:53][BACKEND] : Install started
-[18:54:54][BACKEND] : Install completed in 1.671 s
-[18:54:54][BACKEND] : Running..
-[18:55:09][BACKEND] : GO changed /Users/j-chikamori/go/src/github.com/voyagegroup/treasure-app/backend/server.go
-[18:55:09][BACKEND] : Install started
-[18:55:11][BACKEND] : Install completed in 2.016 s
-[18:55:11][BACKEND] : Running..
+[11:36:48][BACKEND] : Watching 21 file/s 14 folder/s
+[11:36:48][BACKEND] : Install started
+[11:36:51][BACKEND] : Install completed in 3.653 s
+[11:36:51][BACKEND] : Running..
+[11:36:51][BACKEND] : 2019/08/08 11:36:51 server.go:51: Listening on port 1991
 ```

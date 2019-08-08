@@ -5,8 +5,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/voyagegroup/treasure-app/httputil"
+	"github.com/voyagegroup/treasure-app/repository"
+
 	"github.com/jmoiron/sqlx"
-	"github.com/voyagegroup/treasure-app/model"
 	"github.com/voyagegroup/treasure-app/util"
 )
 
@@ -21,15 +23,15 @@ func NewPrivateHandler(dbx *sqlx.DB) *PrivateHandler {
 }
 
 func (h *PrivateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	contextUser, err := model.GetUserFromContext(r.Context())
+	contextUser, err := httputil.GetUserFromContext(r.Context())
 	if err != nil {
 		log.Print(err)
 		util.WriteJSON(nil, w, http.StatusInternalServerError)
 		return
 	}
-	user, err := model.GetUser(h.dbx, contextUser.FirebaseUID)
+	user, err := repository.GetUser(h.dbx, contextUser.FirebaseUID)
 	if err != nil {
-		log.Printf("Get user failed: %s", err)
+		log.Printf("Show user failed: %s", err)
 		util.WriteJSON(nil, w, http.StatusInternalServerError)
 		return
 	}

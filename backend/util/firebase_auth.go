@@ -2,6 +2,7 @@ package util
 
 import (
 	"context"
+
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 )

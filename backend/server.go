@@ -1,64 +1,90 @@
 package server
 
 import (
-	"firebase.google.com/go/auth"
 	"fmt"
+
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/gorilla/handlers"
+	"github.com/justinas/alice"
+
+	"firebase.google.com/go/auth"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/cors"
+	"github.com/voyagegroup/treasure-app/controller"
 	db2 "github.com/voyagegroup/treasure-app/db"
 	"github.com/voyagegroup/treasure-app/handler"
 	"github.com/voyagegroup/treasure-app/middleware"
 	"github.com/voyagegroup/treasure-app/util"
-	"net/http"
 )
 
 type Server struct {
-	dbx    *sqlx.DB
-	router *mux.Router
+	dbx        *sqlx.DB
+	router     *mux.Router
+	authClient *auth.Client
 }
 
-func NewServer(datasource string) (*Server, error) {
+func NewServer() *Server {
+	return &Server{}
+}
+
+func (s *Server) Init(datasource string) {
 	authClient, err := util.InitAuthClient()
 	if err != nil {
-		return nil, err
+		log.Fatalf("failed init auth client. %s", err)
 	}
+	s.authClient = authClient
 
 	db := db2.NewDb(datasource)
 	dbx, err := db.Open()
 	if err != nil {
-		return nil, err
+		log.Fatalf("failed db init. %s", err)
 	}
-
-	return &Server{
-		router: Route(authClient, dbx),
-	}, nil
+	s.dbx = dbx
+	s.router = s.Route()
 }
 
 func (s *Server) Run(addr string) {
-	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedHeaders: []string{"Authorization"},
-	})
-	h := c.Handler(s.router)
-	fmt.Printf("Listening on port %s", addr)
-	if err := http.ListenAndServe(fmt.Sprintf(":%s", addr), h); err != nil {
+	log.Printf("Listening on port %s", addr)
+	err := http.ListenAndServe(
+		fmt.Sprintf(":%s", addr),
+		handlers.LoggingHandler(os.Stdout, s.router),
+	)
+	if err != nil {
 		panic(err)
 	}
 }
 
-func Route(client *auth.Client, dbx *sqlx.DB) *mux.Router {
-
-	authMiddleware := middleware.NewAuthMiddleware(client, dbx)
-	r := mux.NewRouter()
-	r.Handle("/public", handler.NewPublicHandler())
-	r.Handle("/private", authMiddleware.Handler(handler.NewPrivateHandler(dbx)))
-
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "../frontend/dist/index.html")
+func (s *Server) Route() *mux.Router {
+	authMiddleware := middleware.NewAuthMiddleware(s.authClient, s.dbx)
+	corsMiddleware := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedHeaders: []string{"Authorization"},
 	})
-	r.PathPrefix("/").Handler(
-		http.StripPrefix("/", http.FileServer(http.Dir("../frontend/dist"))))
 
+	commonChain := alice.New(
+		middleware.RecoverMiddleware,
+		corsMiddleware.Handler,
+	)
+
+	authChain := commonChain.Append(
+		authMiddleware.Handler,
+	)
+
+	r := mux.NewRouter()
+	r.Methods(http.MethodGet).Path("/public").Handler(commonChain.Then(handler.NewPublicHandler()))
+	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(handler.NewPrivateHandler(s.dbx)))
+
+	articleController := controller.NewArticle(s.dbx)
+	r.Methods(http.MethodPost).Path("/articles").Handler(authChain.Then(AppHandler{articleController.Create}))
+	r.Methods(http.MethodPut).Path("/articles/{id}").Handler(authChain.Then(AppHandler{articleController.Update}))
+	r.Methods(http.MethodDelete).Path("/articles/{id}").Handler(authChain.Then(AppHandler{articleController.Destroy}))
+	r.Methods(http.MethodGet).Path("/articles").Handler(commonChain.Then(AppHandler{articleController.Index}))
+	r.Methods(http.MethodGet).Path("/articles/{id}").Handler(commonChain.Then(AppHandler{articleController.Show}))
+
+	r.PathPrefix("").Handler(commonChain.Then(http.StripPrefix("/img", http.FileServer(http.Dir("./img")))))
 	return r
 }
