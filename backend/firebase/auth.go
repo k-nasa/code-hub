@@ -1,4 +1,4 @@
-package fbutil
+package firebase
 
 import (
 	"context"

@@ -18,7 +18,7 @@ import (
 	"github.com/voyagegroup/treasure-app/controller"
 	db2 "github.com/voyagegroup/treasure-app/db"
 	"github.com/voyagegroup/treasure-app/middleware"
-	"github.com/voyagegroup/treasure-app/fbutil"
+	"github.com/voyagegroup/treasure-app/firebase"
 )
 
 type Server struct {
@@ -32,7 +32,7 @@ func NewServer() *Server {
 }
 
 func (s *Server) Init(datasource string) {
-	authClient, err := fbutil.InitAuthClient()
+	authClient, err := firebase.InitAuthClient()
 	if err != nil {
 		log.Fatalf("failed init auth client. %s", err)
 	}

@@ -12,7 +12,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/voyagegroup/treasure-app/fbutil"
+	"github.com/voyagegroup/treasure-app/firebase"
 )
 
 type FirebaseCustomToken struct {
@@ -53,7 +53,7 @@ func main() {
 		log.Fatal("error loading .env file")
 	}
 
-	client, err := fbutil.InitAuthClient()
+	client, err := firebase.InitAuthClient()
 	if err != nil {
 		log.Fatalf("error getting Auth client: %v\n", err)
 	}
