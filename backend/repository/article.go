@@ -8,7 +8,7 @@ import (
 )
 
 func AllArticle(db *sqlx.DB) ([]model.Article, error) {
-	var a []model.Article
+	a := make([]model.Article, 0)
 	if err := db.Select(&a, `SELECT id, title, body FROM article`); err != nil {
 		return nil, err
 	}
