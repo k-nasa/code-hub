@@ -9,15 +9,15 @@ import (
 	"github.com/voyagegroup/treasure-app/repository"
 )
 
-type ArticleService struct {
+type Article struct {
 	db *sqlx.DB
 }
 
-func NewArticleService(db *sqlx.DB) *ArticleService {
-	return &ArticleService{db}
+func NewArticleService(db *sqlx.DB) *Article {
+	return &Article{db}
 }
 
-func (a *ArticleService) Update(id int64, newArticle *model.Article) error {
+func (a *Article) Update(id int64, newArticle *model.Article) error {
 	_, err := repository.FindArticle(a.db, id)
 	if err != nil {
 		return errors.Wrap(err, "failed find article")
@@ -38,7 +38,7 @@ func (a *ArticleService) Update(id int64, newArticle *model.Article) error {
 	return nil
 }
 
-func (a *ArticleService) Destroy(id int64) error {
+func (a *Article) Destroy(id int64) error {
 	_, err := repository.FindArticle(a.db, id)
 	if err != nil {
 		return errors.Wrap(err, "failed find article")
@@ -59,7 +59,7 @@ func (a *ArticleService) Destroy(id int64) error {
 	return nil
 }
 
-func (a *ArticleService) Create(newArticle *model.Article) (int64, error) {
+func (a *Article) Create(newArticle *model.Article) (int64, error) {
 	var createdId int64
 	if err := dbutil.TXHandler(a.db, func(tx *sqlx.Tx) error {
 		result, err := repository.CreateArticle(tx, newArticle)
