@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"runtime/debug"
 
 	"github.com/voyagegroup/treasure-app/httputil"
 )
@@ -14,14 +13,6 @@ type AppHandler struct {
 }
 
 func (a AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	defer func() {
-		if rv := recover(); rv != nil {
-			debug.PrintStack()
-			log.Printf("panic: %s", rv)
-			http.Error(w, http.StatusText(
-				http.StatusInternalServerError), http.StatusInternalServerError)
-		}
-	}()
 	status, res, err := a.h(w, r)
 	if err != nil {
 		respondErrorJson(w, status, err)
@@ -44,6 +35,7 @@ func respondJSON(w http.ResponseWriter, status int, payload interface{}) {
 }
 
 func respondErrorJson(w http.ResponseWriter, code int, err error) {
+	log.Printf("code=%d, err=%s", code, err)
 	if e, ok := err.(*httputil.HTTPError); ok {
 		respondJSON(w, code, e)
 	} else if err != nil {
