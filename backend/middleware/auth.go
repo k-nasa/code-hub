@@ -53,14 +53,14 @@ func (auth *AuthMiddleware) Handler(next http.Handler) http.Handler {
 		_, syncErr := repository.SyncUser(auth.db, &firebaseUser)
 		if syncErr != nil {
 			log.Print(syncErr.Error())
-			http.Error(w, "Failed to sync userRecord", http.StatusInternalServerError)
+			http.Error(w, "Failed to sync user", http.StatusInternalServerError)
 			return
 		}
 
 		user, err := repository.GetUser(auth.db, firebaseUser.FirebaseUID)
 		if err != nil {
 			log.Print(err.Error())
-			http.Error(w, "Failed to get internal userRecord info", http.StatusInternalServerError)
+			http.Error(w, "Failed to get user", http.StatusInternalServerError)
 			return
 		}
 
