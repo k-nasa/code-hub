@@ -17,11 +17,11 @@ select firebase_uid, display_name, email, photo_url from user where firebase_uid
 	return &u, nil
 }
 
-func SyncUser(db *sqlx.DB, u *model.User) (sql.Result, error) {
+func SyncUser(db *sqlx.DB, fu *model.FirebaseUser) (sql.Result, error) {
 	return db.Exec(`
 INSERT INTO user (firebase_uid, display_name, email, photo_url)
 VALUES (?, ?, ?, ?)
 ON DUPLICATE KEY
 UPDATE display_name = ?, email = ?, photo_url = ?, utime = NOW()
-`, u.FirebaseUID, u.DisplayName, u.Email, u.PhotoURL, u.DisplayName, u.Email, u.PhotoURL)
+`, fu.FirebaseUID, fu.DisplayName, fu.Email, fu.PhotoURL, fu.DisplayName, fu.Email, fu.PhotoURL)
 }
