@@ -22,6 +22,6 @@ func SyncUser(db *sqlx.DB, fu *model.FirebaseUser) (sql.Result, error) {
 INSERT INTO user (firebase_uid, display_name, email, photo_url)
 VALUES (?, ?, ?, ?)
 ON DUPLICATE KEY
-UPDATE display_name = ?, email = ?, photo_url = ?, utime = NOW()
+UPDATE display_name = ?, email = ?, photo_url = ?
 `, fu.FirebaseUID, fu.DisplayName, fu.Email, fu.PhotoURL, fu.DisplayName, fu.Email, fu.PhotoURL)
 }
