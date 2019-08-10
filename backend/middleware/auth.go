@@ -41,23 +41,30 @@ func (auth *AuthMiddleware) Handler(next http.Handler) http.Handler {
 			http.Error(w, "Failed to verify token", http.StatusForbidden)
 			return
 		}
-		user, err := auth.client.GetUser(r.Context(), token.UID)
+		userRecord, err := auth.client.GetUser(r.Context(), token.UID)
 
 		if err != nil {
 			log.Print(err.Error())
-			http.Error(w, "Failed to get user", http.StatusInternalServerError)
+			http.Error(w, "Failed to get userRecord", http.StatusInternalServerError)
 			return
 		}
 
-		u := toUser(user)
-		_, syncErr := repository.SyncUser(auth.db, &u)
+		firebaseUser := toFirebaseUser(userRecord)
+		_, syncErr := repository.SyncUser(auth.db, &firebaseUser)
 		if syncErr != nil {
 			log.Print(syncErr.Error())
 			http.Error(w, "Failed to sync user", http.StatusInternalServerError)
 			return
 		}
 
-		ctx := httputil.SetUserToContext(r.Context(), &u)
+		user, err := repository.GetUser(auth.db, firebaseUser.FirebaseUID)
+		if err != nil {
+			log.Print(err.Error())
+			http.Error(w, "Failed to get user", http.StatusInternalServerError)
+			return
+		}
+
+		ctx := httputil.SetUserToContext(r.Context(), user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -76,8 +83,8 @@ func getTokenFromHeader(req *http.Request) (string, error) {
 	return "", errors.New("authorization header format must be 'Bearer {token}'")
 }
 
-func toUser(u *auth.UserRecord) model.User {
-	return model.User{
+func toFirebaseUser(u *auth.UserRecord) model.FirebaseUser {
+	return model.FirebaseUser{
 		FirebaseUID: u.UID,
 		Email:       u.Email,
 		PhotoURL:    u.PhotoURL,
