@@ -5,16 +5,16 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type Db struct {
+type DB struct {
 	datasource string
 }
 
-func NewDb(datasource string) *Db {
-	return &Db{
+func NewDB(datasource string) *DB {
+	return &DB{
 		datasource: datasource,
 	}
 }
 
-func (db *Db) Open() (*sqlx.DB, error) {
+func (db *DB) Open() (*sqlx.DB, error) {
 	return sqlx.Open("mysql", db.datasource)
 }

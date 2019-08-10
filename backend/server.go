@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+
 	"github.com/voyagegroup/treasure-app/sample"
 
 	"log"
@@ -17,8 +18,8 @@ import (
 	"github.com/rs/cors"
 	"github.com/voyagegroup/treasure-app/controller"
 	db2 "github.com/voyagegroup/treasure-app/db"
-	"github.com/voyagegroup/treasure-app/middleware"
 	"github.com/voyagegroup/treasure-app/firebase"
+	"github.com/voyagegroup/treasure-app/middleware"
 )
 
 type Server struct {
@@ -38,7 +39,7 @@ func (s *Server) Init(datasource string) {
 	}
 	s.authClient = authClient
 
-	db := db2.NewDb(datasource)
+	db := db2.NewDB(datasource)
 	dbx, err := db.Open()
 	if err != nil {
 		log.Fatalf("failed db init. %s", err)
