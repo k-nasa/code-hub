@@ -52,7 +52,7 @@ func (s *Server) Run(addr string) {
 	log.Printf("Listening on port %s", addr)
 	err := http.ListenAndServe(
 		fmt.Sprintf(":%s", addr),
-		handlers.LoggingHandler(os.Stdout, s.router),
+		handlers.CombinedLoggingHandler(os.Stdout, s.router),
 	)
 	if err != nil {
 		panic(err)
