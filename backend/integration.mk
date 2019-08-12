@@ -1,3 +1,5 @@
+export GO111MODULE := on
+
 UID := demo
 PORT := 1991
 HOST := localhost
