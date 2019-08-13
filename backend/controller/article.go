@@ -17,15 +17,15 @@ import (
 )
 
 type Article struct {
-	dbx *sqlx.DB
+	db *sqlx.DB
 }
 
-func NewArticle(dbx *sqlx.DB) *Article {
-	return &Article{dbx: dbx}
+func NewArticle(db *sqlx.DB) *Article {
+	return &Article{db: db}
 }
 
 func (a *Article) Index(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
-	articles, err := repository.AllArticle(a.dbx)
+	articles, err := repository.AllArticle(a.db)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
@@ -44,7 +44,7 @@ func (a *Article) Show(w http.ResponseWriter, r *http.Request) (int, interface{}
 		return http.StatusBadRequest, nil, err
 	}
 
-	article, err := repository.FindArticle(a.dbx, aid)
+	article, err := repository.FindArticle(a.db, aid)
 	if err != nil && err == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
 	} else if err != nil {
@@ -60,7 +60,7 @@ func (a *Article) Create(w http.ResponseWriter, r *http.Request) (int, interface
 		return http.StatusBadRequest, nil, err
 	}
 
-	articleService := service.NewArticle(a.dbx)
+	articleService := service.NewArticle(a.db)
 	id, err := articleService.Create(newArticle)
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
@@ -87,7 +87,7 @@ func (a *Article) Update(w http.ResponseWriter, r *http.Request) (int, interface
 		return http.StatusBadRequest, nil, err
 	}
 
-	articleService := service.NewArticle(a.dbx)
+	articleService := service.NewArticle(a.db)
 	err = articleService.Update(aid, reqArticle)
 	if err != nil && errors.Cause(err) == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
@@ -110,7 +110,7 @@ func (a *Article) Destroy(w http.ResponseWriter, r *http.Request) (int, interfac
 		return http.StatusBadRequest, nil, err
 	}
 
-	articleService := service.NewArticle(a.dbx)
+	articleService := service.NewArticle(a.db)
 	err = articleService.Destroy(aid)
 	if err != nil && errors.Cause(err) == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err

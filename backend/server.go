@@ -23,7 +23,7 @@ import (
 )
 
 type Server struct {
-	dbx        *sqlx.DB
+	db         *sqlx.DB
 	router     *mux.Router
 	authClient *auth.Client
 }
@@ -40,12 +40,11 @@ func (s *Server) Init(datasource string) {
 	s.authClient = authClient
 
 	db := db2.NewDB(datasource)
-	dbx, err := db.Open()
-	dbx.Close()
+	dbcon, err := db.Open()
 	if err != nil {
 		log.Fatalf("failed db init. %s", err)
 	}
-	s.dbx = dbx
+	s.db = dbcon
 	s.router = s.Route()
 }
 
@@ -61,7 +60,7 @@ func (s *Server) Run(addr string) {
 }
 
 func (s *Server) Route() *mux.Router {
-	authMiddleware := middleware.NewAuth(s.authClient, s.dbx)
+	authMiddleware := middleware.NewAuth(s.authClient, s.db)
 	corsMiddleware := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedHeaders: []string{"Authorization"},
@@ -78,9 +77,9 @@ func (s *Server) Route() *mux.Router {
 
 	r := mux.NewRouter()
 	r.Methods(http.MethodGet).Path("/public").Handler(commonChain.Then(sample.NewPublicHandler()))
-	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(sample.NewPrivateHandler(s.dbx)))
+	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(sample.NewPrivateHandler(s.db)))
 
-	articleController := controller.NewArticle(s.dbx)
+	articleController := controller.NewArticle(s.db)
 	r.Methods(http.MethodPost).Path("/articles").Handler(authChain.Then(AppHandler{articleController.Create}))
 	r.Methods(http.MethodPut).Path("/articles/{id}").Handler(authChain.Then(AppHandler{articleController.Update}))
 	r.Methods(http.MethodDelete).Path("/articles/{id}").Handler(authChain.Then(AppHandler{articleController.Destroy}))
