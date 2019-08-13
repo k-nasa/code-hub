@@ -1,3 +1,7 @@
+# Slide
+
+https://go-talks.appspot.com/github.com/voyagegroup/talks/2019/treasure-go-day2/intro.slide#1
+
 # Getting Started
 
 ## 1. Database 立ち上げ
