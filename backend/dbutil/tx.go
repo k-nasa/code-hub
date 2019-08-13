@@ -11,8 +11,8 @@ import (
 
 // TXHandler is handler for working with transaction.
 // This is wrapper function for commit and rollback.
-func TXHandler(dbx *sqlx.DB, f func(*sqlx.Tx) error) error {
-	tx, err := dbx.Beginx()
+func TXHandler(db *sqlx.DB, f func(*sqlx.Tx) error) error {
+	tx, err := db.Beginx()
 	if err != nil {
 		return errors.Wrap(err, "start transaction failed")
 	}

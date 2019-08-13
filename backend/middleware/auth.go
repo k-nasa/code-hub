@@ -16,19 +16,19 @@ const (
 	bearer = "Bearer"
 )
 
-type AuthMiddleware struct {
+type Auth struct {
 	client *auth.Client
 	db     *sqlx.DB
 }
 
-func NewAuthMiddleware(client *auth.Client, db *sqlx.DB) *AuthMiddleware {
-	return &AuthMiddleware{
+func NewAuth(client *auth.Client, db *sqlx.DB) *Auth {
+	return &Auth{
 		client: client,
 		db:     db,
 	}
 }
 
-func (auth *AuthMiddleware) Handler(next http.Handler) http.Handler {
+func (auth *Auth) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		idToken, err := getTokenFromHeader(r)
 		if err != nil {
