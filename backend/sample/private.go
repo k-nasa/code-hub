@@ -12,12 +12,12 @@ import (
 )
 
 type PrivateHandler struct {
-	dbx *sqlx.DB
+	db *sqlx.DB
 }
 
-func NewPrivateHandler(dbx *sqlx.DB) *PrivateHandler {
+func NewPrivateHandler(db *sqlx.DB) *PrivateHandler {
 	return &PrivateHandler{
-		dbx: dbx,
+		db: db,
 	}
 }
 
@@ -28,7 +28,7 @@ func (h *PrivateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		WriteJSON(nil, w, http.StatusInternalServerError)
 		return
 	}
-	user, err := repository.GetUser(h.dbx, contextUser.FirebaseUID)
+	user, err := repository.GetUser(h.db, contextUser.FirebaseUID)
 	if err != nil {
 		log.Printf("Show user failed: %s", err)
 		WriteJSON(nil, w, http.StatusInternalServerError)
