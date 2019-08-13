@@ -4,9 +4,13 @@
 
 `../database` に構成などが定義されているので、読んでみてください。
 
+以下のターゲットを叩くと、databaseの準備をします。
+
 ```console
 ❯ make -f integration.mk database-init
-make -C ../database init
+```
+
+```console
 which goose || GO111MODULE=off go get -u github.com/pressly/goose/cmd/goose
 /Users/j-chikamori/go/bin/goose
 docker-compose up -d
@@ -72,9 +76,14 @@ PORT=1991
 使っているAPI: [Exchange custom token for an ID and refresh token](https://firebase.google.com/docs/reference/rest/auth/#section-refresh-token)  
 それぞれのキーについては、上記リンクを見れば大体分かる。
 
+トークンの作成
+
 ```console
 ❯ make -f integration.mk create-token UID=demo
 go run ./cmd/customtoken/main.go demo .idToken
+```
+
+```console
 {
   "kind": "identitytoolkit#VerifyCustomTokenResponse",
   "idToken": "idtoken",
@@ -88,17 +97,27 @@ go run ./cmd/customtoken/main.go demo .idToken
 
 ## 5. Hello World
 
+*サーバー立ち上げ*
+
 ```console
 ❯ make run
 go run cmd/api/main.go
+```
+
+```console
 2019/08/08 11:32:47 server.go:51: Listening on port 1991
 ```
 
 サーバーを立ち上げた状態で、別シェルから以下を叩く。
 
+*認証ありエンドポイントへのリクエスト*
+
 ```console
 ❯ make -f integration.mk req-private
 curl -v -H "Authorization: Bearer Hoge" localhost:1991/private
+```
+
+```console
 *   Trying ::1...
 * TCP_NODELAY set
 * Connected to localhost (::1) port 1991 (#0)
@@ -116,10 +135,16 @@ curl -v -H "Authorization: Bearer Hoge" localhost:1991/private
 <
 * Connection #0 to host localhost left intact
 {"message":"Hello  from private endpoint! Your firebase uuid is demo"}
+```
 
+*認証なしエンドポイントへのリクエスト*
 
+```console
 ❯ make -f integration.mk req-public
 curl -v localhost:1991/public
+```
+
+```console
 *   Trying ::1...
 * TCP_NODELAY set
 * Connected to localhost (::1) port 1991 (#0)
@@ -149,16 +174,29 @@ curl -v localhost:1991/public
 
 コードを書き換える度に `go run` し直すのは面倒くさいので、書き換えるとrebuildしてくれるコマンドを用意しているので活用してください。
 
+realizeをgo getする
+
 ```console
 ❯ make dev-deps                     
   GO111MODULE=off go get -u -v \
                   github.com/oxequa/realize
+```
+
+```
   github.com/oxequa/realize (download)
   github.com/oxequa/interact (download)
   github.com/fatih/color (download)
   github.com/fsnotify/fsnotify (download)
+```
+
+realizeを使って実行する
+
+```console
 ❯ make refresh-run
 realize start
+```
+
+``` console
 [11:36:48][BACKEND] : Watching 21 file/s 14 folder/s
 [11:36:48][BACKEND] : Install started
 [11:36:51][BACKEND] : Install completed in 3.653 s
