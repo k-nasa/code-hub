@@ -41,6 +41,7 @@ func (s *Server) Init(datasource string) {
 
 	db := db2.NewDB(datasource)
 	dbx, err := db.Open()
+	dbx.Close()
 	if err != nil {
 		log.Fatalf("failed db init. %s", err)
 	}
@@ -60,7 +61,7 @@ func (s *Server) Run(addr string) {
 }
 
 func (s *Server) Route() *mux.Router {
-	authMiddleware := middleware.NewAuthMiddleware(s.authClient, s.dbx)
+	authMiddleware := middleware.NewAuth(s.authClient, s.dbx)
 	corsMiddleware := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedHeaders: []string{"Authorization"},
