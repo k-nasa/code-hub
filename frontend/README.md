@@ -7,7 +7,7 @@
 設定ファイルのコピーとパッケージのセットアップを行う
 
 ```console
-❯ make init
+❯ make setup
 ```
 
 **Firebase API Key**
