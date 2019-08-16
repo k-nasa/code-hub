@@ -6,8 +6,8 @@ HOST := localhost
 TOKEN_FILE := .idToken
 
 CODE_ID :=1
-CODE_TITLE:=俺が考えた最強のコード
-CODE_BODY:=hogehoge
+CODE_TITLE:=俺が考えた最強のコード999番目
+CODE_BODY:=unc AllCodesWithUser(db *sqlx.DB) ([]model.CodeWithUser, error) {
 CODE_STATUS:=public
 
 ARTICLE_COMMENT_BODY:=bodycomment
