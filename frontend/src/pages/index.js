@@ -37,27 +37,12 @@ const Index = props => {
         <div />
       )}
       {codes.map((c, i) => {
-        {
-          // TODO あとでコンポーネントとして切り出す
-        }
         return (
           <article key={i} className="media">
             <figure className="media-left">
               <UserIcon icon_url={c.icon_url} />
             </figure>
-            <div className="media-content">
-              <div className="content">
-                <h2>{c.username ? c.username : "名無しさん"}</h2>
-                <p>
-                  <strong>{c.title}</strong>
-                  <br />
-                  <small>{new Date(c.created_at).toDateString()}</small>
-                </p>
-                <pre>
-                  <code>{c.body}</code>
-                </pre>
-              </div>
-            </div>
+            <CodeContent code={c} />
           </article>
         );
       })}
@@ -94,3 +79,23 @@ const UserIcon = props => (
     />
   </p>
 );
+
+const CodeContent = props => {
+  const c = props.code;
+
+  return (
+    <div className="media-content">
+      <div className="content">
+        <h2>{c.username ? c.username : "名無しさん"}</h2>
+        <p>
+          <strong>{c.title}</strong>
+          <br />
+          <small>{new Date(c.created_at).toDateString()}</small>
+        </p>
+        <pre>
+          <code>{c.body}</code>
+        </pre>
+      </div>
+    </div>
+  );
+};
