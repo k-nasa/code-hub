@@ -36,15 +36,7 @@ const Index = props => {
         return (
           <article key={i} className="media">
             <figure className="media-left">
-              <p className="image is-64x64">
-                <img
-                  src={
-                    c.icon_url
-                      ? c.icon_url
-                      : process.env.REACT_APP_DUMMY_ICON_URL
-                  }
-                />
-              </p>
+                <UserIcon icon_url={c.icon_url}/>
             </figure>
             <div className="media-content">
               <div className="content">
@@ -86,3 +78,8 @@ const FooterButton = (props) => (
             {props.text}
         </button>
 )
+const UserIcon = (props) => (
+  <p className="image is-64x64">
+    <img src={props.icon_url ? props.icon_url : process.env.REACT_APP_DUMMY_ICON_URL} />
+  </p>
+);
