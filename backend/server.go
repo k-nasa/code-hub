@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/justinas/alice"
+	"github.com/k-nasa/code-hub/controller"
 	db2 "github.com/k-nasa/code-hub/db"
 	"github.com/k-nasa/code-hub/firebase"
 	"github.com/k-nasa/code-hub/middleware"
@@ -75,6 +76,9 @@ func (s *Server) Route() *mux.Router {
 	r := mux.NewRouter()
 	r.Methods(http.MethodGet).Path("/public").Handler(commonChain.Then(sample.NewPublicHandler()))
 	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(sample.NewPrivateHandler(s.db)))
+
+	codeController := controller.NewCode(s.db)
+	r.Methods(http.MethodPost).Path("/codes").Handler(authChain.Then(AppHandler{codeController.Create}))
 
 	r.PathPrefix("").Handler(commonChain.Then(http.StripPrefix("/img", http.FileServer(http.Dir("./img")))))
 	return r
