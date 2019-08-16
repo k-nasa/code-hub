@@ -27,6 +27,9 @@ req-codes:
 req-code-get:
 	curl -v $(HOST):$(PORT)/codes/$(CODE_ID)
 
+req-codes-user:
+	curl -v $(HOST):$(PORT)/users/codes
+
 req-private:
 	curl -v -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/private
 

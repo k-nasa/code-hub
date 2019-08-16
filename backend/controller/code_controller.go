@@ -74,3 +74,12 @@ func (c *Code) Create(w http.ResponseWriter, r *http.Request) (int, interface{},
 
 	return http.StatusCreated, newCode, nil
 }
+
+func (c *Code) IndexWithUser(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+	code, err := repository.AllCodesWithUser(c.db)
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	return http.StatusOK, code, nil
+}

@@ -15,6 +15,14 @@ func AllCodes(db *sqlx.DB) ([]model.Code, error) {
 	return c, nil
 }
 
+func AllCodesWithUser(db *sqlx.DB) ([]model.CodeWithUser, error) {
+	c := make([]model.CodeWithUser, 0)
+	if err := db.Select(&c, `select codes.id, title, body, status, codes.created_at, codes.updated_at, user_id, username from codes inner join users on users.id = codes.user_id`); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
 func FindCode(db *sqlx.DB, id int64) (*model.Code, error) {
 	code := model.Code{}
 
