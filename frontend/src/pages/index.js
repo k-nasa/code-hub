@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import firebase from "../firebase";
 
 const endpoint = process.env.REACT_APP_ENDPOINT_HOST;
 
@@ -57,6 +58,31 @@ const Index = props => {
           </article>
         );
       })}
+
+      {props.user ? (
+        <button
+          style={{
+            bottom: "10px",
+            right: "10px",
+            position: "fixed"
+          }}
+          className="button is-link outlined"
+        >
+          write code!!
+        </button>
+      ) : (
+        <button
+          style={{
+            bottom: "10px",
+            right: "10px",
+            position: "fixed"
+          }}
+          className="button is-link outlined"
+          onClick={firebase.login}
+        >
+          sign up!!
+        </button>
+      )}
     </div>
   );
 };

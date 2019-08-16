@@ -57,6 +57,12 @@ const App = () => {
         <div className="hero-head">
           <div className="container">
             <p className="title">CodeHub</p>
+            {
+              // TODO 左寄せしてスタイル当てる
+            }
+            <div className="subtitle">
+              <p onClick={firebase.logout}>logout</p>
+            </div>
           </div>
         </div>
       </section>
@@ -64,7 +70,7 @@ const App = () => {
 
       <br />
       <Router>
-        <Route path="/" exact component={Index} />
+        <Route path="/" exact render={() => <Index user={user} />} />
       </Router>
     </div>
   );
