@@ -83,3 +83,21 @@ func (c *Code) IndexWithUser(w http.ResponseWriter, r *http.Request) (int, inter
 
 	return http.StatusOK, code, nil
 }
+
+func (c *Code) ShowUserCode(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		return http.StatusBadRequest, nil, &httputil.HTTPError{Message: "invalid path parameter"}
+	}
+
+	aid, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return http.StatusBadRequest, nil, err
+	}
+
+	codeService := service.NewCodeService(c.db)
+	code, err := codeService.FindUserCode(aid)
+
+	return http.StatusOK, code, nil
+}

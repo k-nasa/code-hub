@@ -84,6 +84,7 @@ func (s *Server) Route() *mux.Router {
 
 	// FIXME urlとIndexWithUserっていうのが微妙、、、
 	r.Methods(http.MethodGet).Path("/users/codes").Handler(commonChain.Then(AppHandler{codeController.IndexWithUser}))
+	r.Methods(http.MethodGet).Path("/users/{id}/codes").Handler(commonChain.Then(AppHandler{codeController.ShowUserCode}))
 
 	r.PathPrefix("").Handler(commonChain.Then(http.StripPrefix("/img", http.FileServer(http.Dir("./img")))))
 	return r

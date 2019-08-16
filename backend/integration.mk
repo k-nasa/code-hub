@@ -6,6 +6,7 @@ HOST := localhost
 TOKEN_FILE := .idToken
 
 CODE_ID :=1
+USER_ID :=27
 CODE_TITLE:=俺が考えた最強のコード999番目
 CODE_BODY:=unc AllCodesWithUser(db *sqlx.DB) ([]model.CodeWithUser, error) {
 CODE_STATUS:=public
@@ -29,6 +30,9 @@ req-code-get:
 
 req-codes-user:
 	curl -v $(HOST):$(PORT)/users/codes
+
+req-users-code:
+	curl -v $(HOST):$(PORT)/users/$(USER_ID)/codes
 
 req-private:
 	curl -v -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/private

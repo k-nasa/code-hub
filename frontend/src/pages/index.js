@@ -92,9 +92,15 @@ const CodeContent = props => {
   return (
     <div className="media-content">
       <div className="content">
-        <h2>{c.username ? c.username : "名無しさん"}</h2>
+        <h2>
+          <Link to={`/user/${c.user_id}`}>
+            {c.username ? c.username : "名無しさん"}
+          </Link>
+        </h2>
         <p>
-          <strong>{c.title}</strong>
+          <Link to={`/codes/${c.id}`}>
+            <strong>{c.title}</strong>
+          </Link>
           <br />
           <small>{new Date(c.created_at).toDateString()}</small>
         </p>

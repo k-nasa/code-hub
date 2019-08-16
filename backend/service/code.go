@@ -17,7 +17,6 @@ func NewCodeService(db *sqlx.DB) *Code {
 }
 
 func (c *Code) Create(newCode *model.Code) (*model.Code, error) {
-
 	code := &model.Code{}
 
 	if err := dbutil.TXHandler(c.db, func(tx *sqlx.Tx) error {
@@ -43,4 +42,22 @@ func (c *Code) Create(newCode *model.Code) (*model.Code, error) {
 	}
 
 	return code, nil
+}
+
+func (c *Code) FindUserCode(user_id int64) (*model.UserCodes, error) {
+	userCodes := &model.UserCodes{}
+
+	var err error
+	u, err := repository.GetUserById(c.db, user_id)
+	if err != nil {
+		return nil, err
+	}
+	userCodes.User = *u
+
+	userCodes.Codes, err = repository.FindUserCodes(c.db, user_id)
+	if err != nil {
+		return nil, err
+	}
+
+	return userCodes, nil
 }

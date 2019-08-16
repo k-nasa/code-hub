@@ -3,7 +3,6 @@ import { useState } from "react";
 import { postCode } from "../api";
 import ErrorMessage from "../component/error_message";
 import SuccessMessage from "../component/success_message";
-import "../style.css";
 
 const WriteCode = props => {
   const [title, setTitle] = useState("");

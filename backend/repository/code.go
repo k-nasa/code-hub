@@ -32,6 +32,15 @@ func FindCode(db *sqlx.DB, id int64) (*model.Code, error) {
 	return &code, nil
 }
 
+func FindUserCodes(db *sqlx.DB, user_id int64) ([]*model.Code, error) {
+	code := []*model.Code{}
+
+	if err := db.Select(&code, `SELECT * FROM codes WHERE user_id = ? order by updated_at desc`, user_id); err != nil {
+		return nil, err
+	}
+	return code, nil
+}
+
 func CreateCode(db *sqlx.Tx, code *model.Code) (sql.Result, error) {
 	return db.Exec(`insert into codes(user_id, title, body, status) values(?, ?, ?, ?)`,
 		code.UserID, code.Title, code.Body, code.Status)
