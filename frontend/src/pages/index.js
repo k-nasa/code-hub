@@ -64,31 +64,25 @@ const Index = props => {
       })}
 
       {props.user ? (
-        <button
-          style={{
-            bottom: "10px",
-            right: "10px",
-            position: "fixed"
-          }}
-          className="button is-link outlined"
-        >
-          write code!!
-        </button>
+        <FooterButton text="Write code!!" />
       ) : (
-        <button
-          style={{
-            bottom: "10px",
-            right: "10px",
-            position: "fixed"
-          }}
-          className="button is-link outlined"
-          onClick={firebase.login}
-        >
-          sign up!!
-        </button>
+        <FooterButton text="Sign up!!" />
       )}
     </div>
   );
 };
 
 export default Index;
+
+const FooterButton = (props) => (
+        <button
+          style={{
+            bottom: "10px",
+            right: "10px",
+            position: "fixed"
+          }}
+          className="button is-link outlined"
+        >
+            {props.text}
+        </button>
+)
