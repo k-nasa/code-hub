@@ -14,10 +14,6 @@ ARTICLE_COMMENT_BODY:=bodycomment
 create-token:
 	go run ./cmd/customtoken/main.go $(UID) $(TOKEN_FILE)
 
-req-articles:
-	curl -v $(HOST):$(PORT)/articles
-
-
 req-public:
 	curl -v $(HOST):$(PORT)/public
 
