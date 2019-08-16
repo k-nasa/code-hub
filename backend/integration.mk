@@ -21,6 +21,12 @@ req-public:
 req-code-post:
 	curl -v -XPOST -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/codes -d '{"title": "$(CODE_TITLE)", "body": "$(CODE_BODY)", "status": "$(CODE_STATUS)"}'
 
+req-codes:
+	curl -v $(HOST):$(PORT)/codes
+
+req-code-get:
+	curl -v $(HOST):$(PORT)/codes/$(CODE_ID)
+
 req-private:
 	curl -v -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/private
 

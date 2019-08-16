@@ -7,6 +7,14 @@ import (
 	"github.com/k-nasa/code-hub/model"
 )
 
+func AllCodes(db *sqlx.DB) ([]model.Code, error) {
+	c := make([]model.Code, 0)
+	if err := db.Select(&c, `SELECT * FROM codes`); err != nil {
+		return nil, err
+	}
+	return c, nil
+}
+
 func FindCode(db *sqlx.DB, id int64) (*model.Code, error) {
 	code := model.Code{}
 

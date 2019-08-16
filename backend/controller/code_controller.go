@@ -3,19 +3,51 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/k-nasa/code-hub/httputil"
 	"github.com/k-nasa/code-hub/model"
+	"github.com/k-nasa/code-hub/repository"
 	"github.com/k-nasa/code-hub/service"
 )
 
 type Code struct {
-	dbx *sqlx.DB
+	db *sqlx.DB
 }
 
-func NewCode(dbx *sqlx.DB) *Code {
-	return &Code{dbx: dbx}
+func NewCode(db *sqlx.DB) *Code {
+	return &Code{db: db}
+}
+
+func (c *Code) Index(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+	codes, err := repository.AllCodes(c.db)
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	return http.StatusOK, codes, nil
+}
+
+func (c *Code) Show(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		return http.StatusBadRequest, nil, &httputil.HTTPError{Message: "invalid path parameter"}
+	}
+
+	aid, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return http.StatusBadRequest, nil, err
+	}
+
+	code, err := repository.FindCode(c.db, aid)
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	return http.StatusOK, code, nil
 }
 
 func (c *Code) Create(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
@@ -32,7 +64,7 @@ func (c *Code) Create(w http.ResponseWriter, r *http.Request) (int, interface{},
 
 	newCode.UserID = &user.ID
 
-	codeService := service.NewCodeService(c.dbx)
+	codeService := service.NewCodeService(c.db)
 
 	newCode, err = codeService.Create(newCode)
 
