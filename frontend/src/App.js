@@ -22,18 +22,8 @@ const App = () => {
 
   return (
     <div>
-      <section className="hero is-dark">
-        <div className="hero-head">
-          <div className="container">
-            <p className="title">CodeHub</p>
-            <p style={{ textAlign: "right" }} onClick={firebase.logout}>
-              logout
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {errorMessage ? <errorMessage error={errorMessage} /> : <div />}
+      <HeaderMenue/>
+      {errorMessage ? <ErrorMessage error={errorMessage} /> : <div />}
 
       <br />
       <Router>
@@ -45,9 +35,22 @@ const App = () => {
 
 export default App;
 
-const errorMessage = error => (
+const ErrorMessage = error => (
   <div class="notification is-danger">
     <button class="delete" />
     <p>{error}</p>
   </div>
+);
+
+const HeaderMenue = () => (
+  <section className="hero is-dark">
+    <div className="hero-head">
+      <div className="container">
+        <p className="title">CodeHub</p>
+        {/* <p style={{ textAlign: "right" }} onClick={firebase.logout}>
+          logout
+        </p> */}
+      </div>
+    </div>
+  </section>
 );
