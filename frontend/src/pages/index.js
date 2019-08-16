@@ -1,6 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import ErrorMessage from "../component/error_message";
+import firebase from "../firebase";
+import { fetchCodes } from '../api'
+import { Link } from "react-router-dom";
 
 const endpoint = process.env.REACT_APP_ENDPOINT_HOST;
 
@@ -13,7 +16,7 @@ const Index = props => {
   }, []);
 
   const init = async () => {
-    const res = await fetch(`${endpoint}/users/codes`).catch(e => {
+    const res = await fetchCodes().catch(e => {
       setErrorMessage(e.toString());
     });
 
@@ -48,9 +51,11 @@ const Index = props => {
       })}
 
       {props.user ? (
-        <FooterButton text="Write code!!" />
+        <Link to="write_code">
+          <FooterButton text="Write code!!" />
+        </Link>
       ) : (
-        <FooterButton text="Sign up!!" />
+        <FooterButton text="Sign up!!" handler={firebase.login} />
       )}
     </div>
   );
@@ -65,7 +70,8 @@ const FooterButton = props => (
       right: "20px",
       position: "fixed"
     }}
-    className="button is-link outlined"
+    onClick={props.handler}
+    className="button is-link is-outlined"
   >
     <p style={{ fontSize: "24px" }}>{props.text}</p>
   </button>

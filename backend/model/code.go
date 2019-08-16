@@ -18,6 +18,7 @@ type CodeWithUser struct {
 	Title    string `db:"title" json:"title"`
 	Body     string `db:"body" json:"body"`
 	UserID   *int64 `db:"user_id" json:"user_id"`
+	IconUrl  string `db:"icon_url" json:"icon_url"`
 	Username string `db:"username" json:"username"`
 	// TODO あとからenumっぽいのにしたい
 	Status    string    `db:"status" json:"status"`
