@@ -17,7 +17,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/cors"
 	"github.com/voyagegroup/treasure-app/controller"
-	db2 "github.com/voyagegroup/treasure-app/db"
+	"github.com/voyagegroup/treasure-app/db"
 	"github.com/voyagegroup/treasure-app/firebase"
 	"github.com/voyagegroup/treasure-app/middleware"
 )
@@ -39,8 +39,8 @@ func (s *Server) Init(datasource string) {
 	}
 	s.authClient = authClient
 
-	db := db2.NewDB(datasource)
-	dbcon, err := db.Open()
+	cs := db.NewDB(datasource)
+	dbcon, err := cs.Open()
 	if err != nil {
 		log.Fatalf("failed db init. %s", err)
 	}
