@@ -1,2 +1,3 @@
 application_default_credentials.json
 .env
+.idToken
