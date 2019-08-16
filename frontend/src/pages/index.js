@@ -1,12 +1,12 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import firebase from "../firebase";
+import ErrorMessage from "../component/error_message";
 
 const endpoint = process.env.REACT_APP_ENDPOINT_HOST;
 
 const Index = props => {
   const [codes, setUser] = useState([]);
-  const [errorMessage, setMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     init();
@@ -14,11 +14,11 @@ const Index = props => {
 
   const init = async () => {
     const res = await fetch(`${endpoint}/users/codes`).catch(e => {
-      setMessage(e.toString());
+      setErrorMessage(e.toString());
     });
 
-    if(res === undefined || res === null) {
-        return
+    if (res === undefined || res === null) {
+      return;
     }
 
     const json = await res.json();
@@ -28,7 +28,14 @@ const Index = props => {
 
   return (
     <div className="App">
-      <p>{errorMessage}</p>
+      {errorMessage ? (
+        <ErrorMessage
+          error={errorMessage}
+          handler={() => setErrorMessage("")}
+        />
+      ) : (
+        <div />
+      )}
       {codes.map((c, i) => {
         {
           // TODO あとでコンポーネントとして切り出す
@@ -36,7 +43,7 @@ const Index = props => {
         return (
           <article key={i} className="media">
             <figure className="media-left">
-                <UserIcon icon_url={c.icon_url}/>
+              <UserIcon icon_url={c.icon_url} />
             </figure>
             <div className="media-content">
               <div className="content">
@@ -66,20 +73,24 @@ const Index = props => {
 
 export default Index;
 
-const FooterButton = (props) => (
-        <button
-          style={{
-            bottom: "10px",
-            right: "10px",
-            position: "fixed"
-          }}
-          className="button is-link outlined"
-        >
-            {props.text}
-        </button>
-)
-const UserIcon = (props) => (
+const FooterButton = props => (
+  <button
+    style={{
+      bottom: "20px",
+      right: "20px",
+      position: "fixed"
+    }}
+    className="button is-link outlined"
+  >
+    <p style={{ fontSize: "24px" }}>{props.text}</p>
+  </button>
+);
+const UserIcon = props => (
   <p className="image is-64x64">
-    <img src={props.icon_url ? props.icon_url : process.env.REACT_APP_DUMMY_ICON_URL} />
+    <img
+      src={
+        props.icon_url ? props.icon_url : process.env.REACT_APP_DUMMY_ICON_URL
+      }
+    />
   </p>
 );

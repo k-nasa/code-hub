@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import firebase from "./firebase";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Index from "./pages/index";
+import ErrorMessage from "./component/error_message";
 
 const endpoint = process.env.REACT_APP_ENDPOINT_HOST;
 
@@ -22,7 +23,7 @@ const App = () => {
 
   return (
     <div>
-      <HeaderMenue/>
+      <HeaderMenue />
       {errorMessage ? <ErrorMessage error={errorMessage} /> : <div />}
 
       <br />
@@ -34,13 +35,6 @@ const App = () => {
 };
 
 export default App;
-
-const ErrorMessage = error => (
-  <div class="notification is-danger">
-    <button class="delete" />
-    <p>{error}</p>
-  </div>
-);
 
 const HeaderMenue = () => (
   <section className="hero is-dark">
