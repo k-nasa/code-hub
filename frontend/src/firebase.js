@@ -27,6 +27,7 @@ const FirebaseFactory = () => {
     },
 
     logout() {
+    window.location.reload();
       return auth.signOut();
     }
   };

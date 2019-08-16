@@ -8,7 +8,6 @@ const endpoint = process.env.REACT_APP_ENDPOINT_HOST;
 
 const App = () => {
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -21,52 +20,20 @@ const App = () => {
     });
   });
 
-  const getPrivateMessage = function(idToken) {
-    return fetch(`${endpoint}/private`, {
-      method: "get",
-      headers: new Headers({
-        Authorization: `Bearer ${idToken}`
-      }),
-      credentials: "same-origin"
-    }).then(res => {
-      if (res.ok) {
-        return res.json();
-      } else {
-        throw Error(`Request rejected with status ${res.status}`);
-      }
-    });
-  };
-
-
-  const getPrivateMess = () => {
-    user
-      .getIdToken()
-      .then(token => {
-        return getPrivateMessage(token);
-      })
-      .then(resp => {
-        setMessage(resp.message);
-      })
-      .catch(e => {
-        setErrorMessage(e.toString());
-      });
-  };
   return (
     <div>
       <section className="hero is-dark">
         <div className="hero-head">
           <div className="container">
             <p className="title">CodeHub</p>
-            {
-              // TODO 左寄せしてスタイル当てる
-            }
-            <div className="subtitle">
-              <p onClick={firebase.logout}>logout</p>
-            </div>
+            <p style={{ textAlign: "right" }} onClick={firebase.logout}>
+              logout
+            </p>
           </div>
         </div>
       </section>
-      <p>{message}</p>
+
+      {errorMessage ? <errorMessage error={errorMessage} /> : <div />}
 
       <br />
       <Router>
@@ -77,3 +44,10 @@ const App = () => {
 };
 
 export default App;
+
+const errorMessage = error => (
+  <div class="notification is-danger">
+    <button class="delete" />
+    <p>{error}</p>
+  </div>
+);

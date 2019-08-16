@@ -17,6 +17,10 @@ const Index = props => {
       setMessage(e.toString());
     });
 
+    if(res === undefined || res === null) {
+        return
+    }
+
     const json = await res.json();
 
     setUser(json);
