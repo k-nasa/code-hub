@@ -8,6 +8,7 @@ import { useState } from "react";
 const WriteCode = props => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [language, setLanguage] = useState("rust");
   const [status, setStatus] = useState("public");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -51,26 +52,33 @@ const WriteCode = props => {
         message={successMessage}
         handler={() => setSuccessMessage("")}
       />
+      <label className="label">Select use language</label>
+      <div style={{ padding: "5px" }} className="select is-info is-medium">
+        <select onChange={e => setLanguage(e.target.value)}>
+          <option value="rust">Rust</option>
+          <option value="golang">Golang</option>
+          <option value="ruby"> Ruby</option>
+        </select>
+      </div>
+      <button onClick={props.handler} className="button is-info is-medium">
+        Run
+      </button>
 
       <div style={{ padding: "30px" }} className="container-padding">
-        <div className="field">
-          <div className="control">
-            <input
-              style={{ padding: "30px", marginBottom: "20px" }}
-              onChange={e => setTitle(e.target.value)}
-              placeholder="A great title for this code"
-              value={title}
-              className="input is-large"
-              type="text"
-            />
-            <textarea
-              onChange={e => setBody(e.target.value)}
-              value={body}
-              placeholder="Great code here!"
-              className="textarea is-info"
-            />
-          </div>
-        </div>
+        <input
+          style={{ padding: "30px", marginBottom: "20px" }}
+          onChange={e => setTitle(e.target.value)}
+          placeholder="A great title for this code"
+          value={title}
+          className="input is-large"
+          type="text"
+        />
+        <textarea
+          onChange={e => setBody(e.target.value)}
+          value={body}
+          placeholder="Great code here!"
+          className="textarea is-info"
+        />
       </div>
       <FooterButton handler={submitCode} changeStatus={setStatus} />
     </div>
