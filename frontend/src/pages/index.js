@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 const endpoint = process.env.REACT_APP_ENDPOINT_HOST;
 
 const Index = props => {
-  const [codes, setUser] = useState([]);
+  const [codes, setCodes] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -28,8 +28,10 @@ const Index = props => {
     }
 
     const json = await res.json();
+    console.log(res)
+    console.log(json)
 
-    setUser(json);
+    setCodes(json);
   };
 
   return (

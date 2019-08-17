@@ -9,6 +9,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+type DuplicationCodeError struct{}
+
+func (err *DuplicationCodeError) Error() string { return "duplication" }
+
 // TXHandler is handler for working with transaction.
 // This is wrapper function for commit and rollback.
 func TXHandler(db *sqlx.DB, f func(*sqlx.Tx) error) error {
@@ -24,7 +28,12 @@ func TXHandler(db *sqlx.DB, f func(*sqlx.Tx) error) error {
 		}
 	}()
 	if err := f(tx); err != nil {
-		return errors.Wrap(err, "transaction: operation failed")
+		switch err.(type) {
+		case *DuplicationCodeError:
+			return err
+		default:
+			return errors.Wrap(err, "transaction: operation failed")
+		}
 	}
 	return nil
 }

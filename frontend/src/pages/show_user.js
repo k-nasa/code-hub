@@ -30,13 +30,12 @@ const ShowUser = props => {
       setErrorMessage("failed get user data");
       return ;
     }
-      return await res.json()
-
+      return await res.json();
   }
 
   return (
     <div style={{padding: "20px"}}>
-      <p>{errorMessage}</p>
+      <ErrorMessage error={errorMessage} handler={() => setErrorMessage("")} />
       <article className="media">
         <figure className="media-left">
           <UserIcon icon_url={user.icon_url} />
@@ -47,6 +46,7 @@ const ShowUser = props => {
           </div>
           {
               codes.map((c, i) => {
+                c.username = user.username;
                   return (
                     <div style={{padding: "16px"}}key={i}>
                       <article className="media">

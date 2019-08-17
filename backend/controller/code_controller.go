@@ -2,11 +2,13 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
+	"github.com/k-nasa/code-hub/dbutil"
 	"github.com/k-nasa/code-hub/httputil"
 	"github.com/k-nasa/code-hub/model"
 	"github.com/k-nasa/code-hub/repository"
@@ -73,12 +75,19 @@ func (c *Code) Create(w http.ResponseWriter, r *http.Request) (int, interface{},
 	newCode, err = codeService.Create(newCode)
 
 	if err != nil {
-		return http.StatusInternalServerError, nil, err
+		switch e := err.(type) {
+		case *dbutil.DuplicationCodeError:
+			return http.StatusBadRequest, map[string]string{"message": "duplication title"}, nil
+		default:
+			fmt.Printf("%T\n", e)
+			return http.StatusInternalServerError, nil, err
+		}
 	}
 
 	return http.StatusCreated, newCode, nil
 }
 
+// FIXME こういうな名前のメソッドが生えるのは良くない気がするぞい！
 func (c *Code) IndexWithUser(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
 	code, err := repository.AllCodesWithUser(c.db)
 	if err != nil {
@@ -88,6 +97,7 @@ func (c *Code) IndexWithUser(w http.ResponseWriter, r *http.Request) (int, inter
 	return http.StatusOK, code, nil
 }
 
+// FIXME こういうな名前のメソッドが生えるのは良くない気がするぞい！
 func (c *Code) ShowUserCode(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
 	vars := mux.Vars(r)
 	id, ok := vars["id"]
@@ -102,6 +112,27 @@ func (c *Code) ShowUserCode(w http.ResponseWriter, r *http.Request) (int, interf
 
 	codeService := service.NewCodeService(c.db)
 	code, err := codeService.FindUserCode(aid)
+
+	return http.StatusOK, code, nil
+}
+
+// FIXME こういうな名前のメソッドが生えるのは良くない気がするぞい！
+func (c *Code) ShowCode(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+	vars := mux.Vars(r)
+	username, ok := vars["username"]
+	if !ok {
+		return http.StatusBadRequest, nil, &httputil.HTTPError{Message: "invalid path parameter"}
+	}
+
+	title, ok := vars["title"]
+	if !ok {
+		return http.StatusBadRequest, nil, &httputil.HTTPError{Message: "invalid path parameter"}
+	}
+
+	code, err := repository.FindCodeByUserAndTitle(c.db, username, title)
+	if err != nil {
+		return http.StatusNotFound, nil, err
+	}
 
 	return http.StatusOK, code, nil
 }

@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 
 const CodeContent = props => {
   const c = props.code;
+  console.log(c)
 
   return (
     <div>
       <p>
-        <Link to={`/codes/${c.id}`}>
+        <Link to={`/codes/${c.username}/${c.title}`}>
           <strong>{c.title}</strong>
         </Link>
         <br />

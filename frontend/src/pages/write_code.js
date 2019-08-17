@@ -19,8 +19,12 @@ const WriteCode = props => {
       setErrorMessage(e.toString());
     });
 
-    if(!handleError(res, setSavingError)) {
-        return
+    if (!handleError(res, setSavingError)) {
+      if (res.status === 400) {
+        const json = await res.json()
+        setErrorMessage(json.message ? json.message : "failed save");
+      }
+      return;
     }
 
     setSavingsuccess();

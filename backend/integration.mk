@@ -6,9 +6,9 @@ HOST := localhost
 TOKEN_FILE := .idToken
 
 CODE_ID :=1
-USER_ID :=27
-CODE_TITLE:=俺が考えた最強のコード999番目
-CODE_BODY:=unc AllCodesWithUser(db *sqlx.DB) ([]model.CodeWithUser, error) {
+USER_ID :=1
+CODE_TITLE:=俺が考え強のコード9
+CODE_BODY:=unc AllCodesWithUsedb *sqlx.DB) ([]model.CodeWithUser, error) {
 CODE_STATUS:=public
 
 ARTICLE_COMMENT_BODY:=bodycomment
@@ -33,6 +33,9 @@ req-codes-user:
 
 req-users-code:
 	curl -v $(HOST):$(PORT)/users/$(USER_ID)/codes
+
+req-code-by-title:
+	curl -v $(HOST):$(PORT)/nasa/$(CODE_TITLE)
 
 req-private:
 	curl -v -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/private

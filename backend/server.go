@@ -86,6 +86,8 @@ func (s *Server) Route() *mux.Router {
 	r.Methods(http.MethodGet).Path("/users/codes").Handler(commonChain.Then(AppHandler{codeController.IndexWithUser}))
 	r.Methods(http.MethodGet).Path("/users/{id}/codes").Handler(commonChain.Then(AppHandler{codeController.ShowUserCode}))
 
+	r.Methods(http.MethodGet).Path("/{username}/{title}").Handler(commonChain.Then(AppHandler{codeController.ShowCode}))
+
 	r.PathPrefix("").Handler(commonChain.Then(http.StripPrefix("/img", http.FileServer(http.Dir("./img")))))
 	return r
 }

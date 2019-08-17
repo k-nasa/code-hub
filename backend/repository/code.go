@@ -32,6 +32,26 @@ func FindCode(db *sqlx.DB, id int64) (*model.Code, error) {
 	return &code, nil
 }
 
+func FindCodeByUserAndTitle(db *sqlx.DB, username, title string) (*model.CodeWithUser, error) {
+	code := model.CodeWithUser{}
+
+	if err := db.Get(&code, `select codes.*, username, icon_url from codes inner join users on users.username = ? where title = ? limit 1`, username, title); err != nil {
+		return nil, err
+	}
+
+	return &code, nil
+}
+
+func FindCodeByUserIdAndTitle(db *sqlx.Tx, user_id *int64, title string) (*model.Code, error) {
+	code := model.Code{}
+
+	if err := db.Get(&code, `select codes.* from codes inner join users on users.id = ? where title = ? limit 1`, *user_id, title); err != nil {
+		return nil, err
+	}
+
+	return &code, nil
+}
+
 func FindUserCodes(db *sqlx.DB, user_id int64) ([]*model.Code, error) {
 	code := []*model.Code{}
 
