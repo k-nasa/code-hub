@@ -13,14 +13,15 @@ const ShowUser = props => {
   const [user, setUser] = useState({});
   
   const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-      fetchCodes()
+      fetchCodes().then(json => {
+        setCodes(json.codes);
+        setUser(json.user);
+      });
   }, [])
 
   const fetchCodes = async () => {
-      console.log(props)
       const res = await fetchUserCodes(props.p.match.params.id).catch((e) => {
           setErrorMessage(e.toString())
       })
@@ -29,15 +30,13 @@ const ShowUser = props => {
       setErrorMessage("failed get user data");
       return ;
     }
-      const json = await res.json()
+      return await res.json()
 
-      console.log(json)
-      setCodes(json.codes)
-      setUser(json.user)
   }
 
   return (
-    <div>
+    <div style={{padding: "20px"}}>
+      <p>{errorMessage}</p>
       <article className="media">
         <figure className="media-left">
           <UserIcon icon_url={user.icon_url} />
@@ -49,8 +48,14 @@ const ShowUser = props => {
           {
               codes.map((c, i) => {
                   return (
-                    <div key={i}>
-                      <CodeContent code={c} />
+                    <div style={{padding: "16px"}}key={i}>
+                      <article className="media">
+                        <div className="media-content">
+                          <div className="content">
+                            <CodeContent code={c} />
+                          </div>
+                        </div>
+                      </article>
                     </div>
                   );
               })
