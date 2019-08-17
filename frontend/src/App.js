@@ -3,7 +3,7 @@ import React from "react";
 import ErrorMessage from "./component/error_message";
 import Index from "./pages/index";
 import ShowUser from "./pages/show_user";
-import ShowCode from './pages/show_code';
+import ShowCode from "./pages/show_code";
 import WriteCode from "./pages/write_code";
 import firebase from "./firebase";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
@@ -34,13 +34,25 @@ const App = () => {
 
         <br />
         <Route exact path="/" exact render={() => <Index user={user} />} />
-        <Route exact path="/write_code" render={() => <WriteCode user={user} />} />
-        <Route exact path="/user/:id" render={(p) => <ShowUser user={user} p={p}/>} />
+        <Route
+          exact
+          path="/write_code"
+          render={() => <WriteCode user={user} />}
+        />
+        <Route
+          exact
+          path="/user/:id"
+          render={p => <ShowUser user={user} p={p} />}
+        />
         {
           // TODO 本当は /:username/:titleでやりたいが、/user:idがマッチしなくなってしまう
           // 上から順にルーティングされるようではないみたいだ
         }
-        <Route exact path="/codes/:username/:title" render={(p) => <ShowCode p={p}/>} />
+        <Route
+          exact
+          path="/codes/:username/:title"
+          render={p => <ShowCode p={p} />}
+        />
       </Router>
     </div>
   );

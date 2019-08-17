@@ -30,10 +30,7 @@ const ShowCode = props => {
 
   return (
     <div style={{ padding: "16px" }}>
-      <ErrorMessage
-        error={errorMessage}
-        handler={() => setErrorMessage("")}
-      />
+      <ErrorMessage error={errorMessage} handler={() => setErrorMessage("")} />
 
       <article className="media">
         <figure className="media-left">
