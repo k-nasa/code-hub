@@ -57,6 +57,10 @@ func (c *Code) Create(w http.ResponseWriter, r *http.Request) (int, interface{},
 		return http.StatusBadRequest, nil, err
 	}
 
+	if newCode.Title == "" || newCode.Body == "" {
+		return http.StatusBadRequest, nil, nil
+	}
+
 	user, err := httputil.GetUserFromContext(r.Context())
 	if err != nil {
 		return http.StatusInternalServerError, nil, err
