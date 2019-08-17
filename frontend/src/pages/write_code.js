@@ -19,15 +19,25 @@ const WriteCode = props => {
     });
 
     if (res === undefined || res === null) {
-      setErrorMessage("Failed save code");
+      setSavingError();
       return;
     }
 
     if (res.status !== 201) {
-      setErrorMessage("Failed saving code");
+      setSavingError();
     }
 
+    setSavingsuccess();
+  };
+
+  const setSavingError = () => {
+    setErrorMessage("Failed saving code");
+    setTimeout(() => setErrorMessage(""), 2000);
+  };
+
+  const setSavingsuccess = () => {
     setSuccessMessage("Saving!!");
+    setTimeout(() => setSuccessMessage(""), 2000);
   };
 
   return (
@@ -69,27 +79,23 @@ export default WriteCode;
 const FooterButton = props => (
   <div
     style={{
-      bottom: "20px",
-      right: "20px",
+      bottom: "50px",
+      right: "100px",
       position: "fixed"
     }}
   >
-    <div className="field">
-      <div className="control">
-        <div className="select is-rounded is-info is-medium">
-          <select onChange={e => props.changeStatus(e.target.value)}>
-            <option value="public">Public saving</option>
-            <option value="private">Private storage</option>
-            <option value="limited_release"> Limited release</option>
-          </select>
-          <button
-            onClick={props.handler}
-            className="button is-link is-outlined"
-          >
-            Save!!
-          </button>
-        </div>
-      </div>
+    <div style={{ padding: "5px" }} className="select is-info is-medium">
+      <select onChange={e => props.changeStatus(e.target.value)}>
+        <option value="public">Public saving</option>
+        <option value="private">Private storage</option>
+        <option value="limited_release"> Limited release</option>
+      </select>
     </div>
+    <button
+      onClick={props.handler}
+      className="button is-info is-outlined is-medium"
+    >
+      Save!!
+    </button>
   </div>
 );

@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import ErrorMessage from "../component/error_message";
 import firebase from "../firebase";
-import { fetchCodes } from '../api'
+import { fetchCodes } from "../api";
 import { Link } from "react-router-dom";
 
 const endpoint = process.env.REACT_APP_ENDPOINT_HOST;
