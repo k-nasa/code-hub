@@ -10,6 +10,7 @@ USER_ID :=1
 CODE_TITLE:=俺が考え強のコード9
 CODE_BODY:=unc AllCodesWithUsedb *sqlx.DB) ([]model.CodeWithUser, error) {
 CODE_STATUS:=public
+LANGUAGE:=golang
 
 ARTICLE_COMMENT_BODY:=bodycomment
 
@@ -39,6 +40,10 @@ req-code-by-title:
 
 req-private:
 	curl -v -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/private
+
+
+req-compile:
+	curl -v -XPOST $(HOST):$(PORT)/compile -d '{"language": "$(LANGUAGE)", "body": "package main"}'
 
 database-init:
 	make -C ../database init

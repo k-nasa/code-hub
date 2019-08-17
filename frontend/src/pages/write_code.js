@@ -4,6 +4,7 @@ import ErrorMessage from "../component/error_message";
 import SuccessMessage from "../component/success_message";
 import { postCode, handleError } from "../api";
 import { useState } from "react";
+import { compile } from "path-to-regexp";
 
 const WriteCode = props => {
   const [title, setTitle] = useState("");
@@ -12,6 +13,7 @@ const WriteCode = props => {
   const [status, setStatus] = useState("public");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [compileResult, setCompileResult] = useState("Execution result")
 
   const submitCode = async () => {
     const user_id = await props.user.getIdToken();
@@ -48,7 +50,7 @@ const WriteCode = props => {
     <div>
       <label className="label">Select use language</label>
       <div style={{ padding: "5px" }} className="select is-info is-medium">
-        <select onChange={e => setLanguage(e.target.value)}>
+        <select value={language} onChange={e => setLanguage(e.target.value)}>
           <option value="rust">Rust</option>
           <option value="golang">Golang</option>
           <option value="ruby"> Ruby</option>
@@ -83,7 +85,7 @@ const WriteCode = props => {
     <div style={{ paddingTop: "20px" }}>
       <div className="control">
         <textarea className="textarea" readOnly>
-          This content is readonly
+          {compileResult}
         </textarea>
       </div>
     </div>

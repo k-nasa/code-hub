@@ -26,7 +26,6 @@ func (c *Compile) Run(w http.ResponseWriter, r *http.Request) (int, interface{},
 	}
 
 	compileService := service.NewCompileService()
-
 	compileResult, err := compileService.Run(compile)
 
 	if err != nil {
