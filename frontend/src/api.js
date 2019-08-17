@@ -21,3 +21,29 @@ export const postCode = (idToken, title, body, status) => {
     return res;
   });
 };
+
+
+export const fetchUserCodes = (user_id) => {
+  return fetch(`${endpoint}/users/${user_id}/codes`)
+  .then( res => {
+    if(!res.ok) {
+      throw Error(`Request rejected with status ${res.status}`);
+    }
+
+    return res;
+  })
+}
+
+export const handleError = (res, errorSetter) => {
+    if (res === undefined || res === null) {
+      errorSetter();
+      return false;
+    }
+
+    if (res.status !== 201) {
+      errorSetter();
+      return false;
+    }
+
+    return true;
+}

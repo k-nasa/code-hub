@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import firebase from "./firebase";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Index from "./pages/index";
+import ShowUser from "./pages/show_user";
 import WriteCode from "./pages/write_code";
 import ErrorMessage from "./component/error_message";
 
@@ -32,6 +33,7 @@ const App = () => {
         <br />
         <Route path="/" exact render={() => <Index user={user} />} />
         <Route path="/write_code" render={() => <WriteCode user={user} />} />
+        <Route path="/user/:id" render={(p) => <ShowUser user={user} p={p}/>} />
       </Router>
     </div>
   );

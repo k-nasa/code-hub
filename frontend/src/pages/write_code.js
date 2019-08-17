@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { postCode } from "../api";
+import { postCode, handleError } from "../api";
 import ErrorMessage from "../component/error_message";
 import SuccessMessage from "../component/success_message";
 
@@ -18,13 +18,8 @@ const WriteCode = props => {
       setErrorMessage(e.toString());
     });
 
-    if (res === undefined || res === null) {
-      setSavingError();
-      return;
-    }
-
-    if (res.status !== 201) {
-      setSavingError();
+    if(!handleError(res, setSavingError)) {
+        return
     }
 
     setSavingsuccess();
