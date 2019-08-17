@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 const CodeContent = props => {
   const c = props.code;
-  console.log(c)
 
   return (
     <div>

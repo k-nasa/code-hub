@@ -28,9 +28,6 @@ const Index = props => {
     }
 
     const json = await res.json();
-    console.log(res)
-    console.log(json)
-
     setCodes(json);
   };
 
