@@ -77,6 +77,9 @@ func (s *Server) Route() *mux.Router {
 	r.Methods(http.MethodGet).Path("/public").Handler(commonChain.Then(sample.NewPublicHandler()))
 	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(sample.NewPrivateHandler(s.db)))
 
+	compileController := controller.NewCompile()
+	r.Methods(http.MethodPost).Path("/compile").Handler(commonChain.Then(AppHandler{compileController.Run}))
+
 	codeController := controller.NewCode(s.db)
 	r.Methods(http.MethodPost).Path("/codes").Handler(authChain.Then(AppHandler{codeController.Create}))
 	r.Methods(http.MethodGet).Path("/codes").Handler(commonChain.Then(AppHandler{codeController.Index}))
