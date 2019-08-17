@@ -1,11 +1,12 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import firebase from "./firebase";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+
+import ErrorMessage from "./component/error_message";
 import Index from "./pages/index";
 import ShowUser from "./pages/show_user";
 import WriteCode from "./pages/write_code";
-import ErrorMessage from "./component/error_message";
+import firebase from "./firebase";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const App = () => {
   const [user, setUser] = useState(null);

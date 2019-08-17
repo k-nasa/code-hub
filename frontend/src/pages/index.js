@@ -1,11 +1,12 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import ErrorMessage from "../component/error_message";
-import firebase from "../firebase";
-import { fetchCodes } from "../api";
-import { Link } from "react-router-dom";
-import UserIcon from "../component/user_icon";
+
 import CodeContent from "../component/code_content";
+import ErrorMessage from "../component/error_message";
+import UserIcon from "../component/user_icon";
+import firebase from "../firebase";
+import { Link } from "react-router-dom";
+import { fetchCodes } from "../api";
+import { useState, useEffect } from "react";
 
 const endpoint = process.env.REACT_APP_ENDPOINT_HOST;
 

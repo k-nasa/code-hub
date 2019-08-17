@@ -1,8 +1,9 @@
 import React from "react";
-import { useState } from "react";
-import { postCode, handleError } from "../api";
+
 import ErrorMessage from "../component/error_message";
 import SuccessMessage from "../component/success_message";
+import { postCode, handleError } from "../api";
+import { useState } from "react";
 
 const WriteCode = props => {
   const [title, setTitle] = useState("");
