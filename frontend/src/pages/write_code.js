@@ -44,14 +44,8 @@ const WriteCode = props => {
     setTimeout(() => setSuccessMessage(""), 2000);
   };
 
-  return (
+  const HeaderButton = () => (
     <div>
-      <ErrorMessage error={errorMessage} handler={() => setErrorMessage("")} />
-
-      <SuccessMessage
-        message={successMessage}
-        handler={() => setSuccessMessage("")}
-      />
       <label className="label">Select use language</label>
       <div style={{ padding: "5px" }} className="select is-info is-medium">
         <select onChange={e => setLanguage(e.target.value)}>
@@ -63,22 +57,51 @@ const WriteCode = props => {
       <button onClick={props.handler} className="button is-info is-medium">
         Run
       </button>
+    </div>
+  );
 
+  const TextEditor = () => (
+    <div>
+      <input
+        style={{ padding: "30px", marginBottom: "20px" }}
+        onChange={e => setTitle(e.target.value)}
+        placeholder="A great title for this code"
+        value={title}
+        className="input is-large"
+        type="text"
+      />
+      <textarea
+        onChange={e => setBody(e.target.value)}
+        value={body}
+        placeholder="Great code here!"
+        className="textarea is-info"
+      />
+    </div>
+  );
+
+  const CompileOutput = () => (
+    <div style={{ paddingTop: "20px" }}>
+      <div className="control">
+        <textarea className="textarea" readOnly>
+          This content is readonly
+        </textarea>
+      </div>
+    </div>
+  );
+
+  return (
+    <div>
+      <ErrorMessage error={errorMessage} handler={() => setErrorMessage("")} />
+
+      <SuccessMessage
+        message={successMessage}
+        handler={() => setSuccessMessage("")}
+      />
+
+      <HeaderButton />
       <div style={{ padding: "30px" }} className="container-padding">
-        <input
-          style={{ padding: "30px", marginBottom: "20px" }}
-          onChange={e => setTitle(e.target.value)}
-          placeholder="A great title for this code"
-          value={title}
-          className="input is-large"
-          type="text"
-        />
-        <textarea
-          onChange={e => setBody(e.target.value)}
-          value={body}
-          placeholder="Great code here!"
-          className="textarea is-info"
-        />
+        <TextEditor />
+        <CompileOutput />
       </div>
       <FooterButton handler={submitCode} changeStatus={setStatus} />
     </div>
