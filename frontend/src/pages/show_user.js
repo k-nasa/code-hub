@@ -49,7 +49,7 @@ const ShowUser = props => {
                 <article className="media">
                   <div className="media-content">
                     <div className="content">
-                      <CodeContent code={c} />
+                      <CodeContent code={c} is_ommit={true}/>
                     </div>
                   </div>
                 </article>

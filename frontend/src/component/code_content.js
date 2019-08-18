@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 
 const CodeContent = props => {
   const c = props.code;
+  const content = props.is_ommit
+    ? c.body.slice(0, 300) + (c.body.length > 300 ? "\n......\nomitted" : "")
+    : c.body;
 
   return (
     <div>
@@ -14,7 +17,7 @@ const CodeContent = props => {
         <small>{new Date(c.created_at).toDateString()}</small>
       </p>
       <pre className="prettyprint">
-        <code>{c.body}</code>
+        <code>{content}</code>
       </pre>
     </div>
   );
