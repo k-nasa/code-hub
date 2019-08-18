@@ -43,9 +43,10 @@ func (c *Compile) Run(compile *model.Compile) (*model.CompileResult, error) {
 
 	switch compile.Language {
 	case "golang":
-		cmd = exec.Command("ruby", filename)
+		cmd = exec.Command("go", "run", filename)
+		cmd.Env = []string{"GO111MODULE=on"}
 	case "rust":
-		cmd = exec.Command("ruby", filename)
+		cmd = exec.Command("cargo", "script", filename)
 	case "ruby":
 		cmd = exec.Command("ruby", filename)
 	default:
@@ -80,7 +81,7 @@ func createResult(cmd *exec.Cmd, compile *model.Compile, tmpDir string) *model.C
 
 	return &model.CompileResult{
 		Language: compile.Language,
-		Ok:       false,
+		Ok:       true,
 		Output:   out.String(),
 	}
 
