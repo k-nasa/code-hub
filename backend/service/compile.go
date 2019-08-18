@@ -78,7 +78,9 @@ func createResult(cmd *exec.Cmd, compile *model.Compile, tmpDir string) *model.C
 func languageCmd(compile *model.Compile, filename string) (*exec.Cmd, error) {
 	switch compile.Language {
 	case "golang":
-		return exec.Command("go", "run", filename), nil
+		cmd := exec.Command("go", "run", filename)
+		cmd.Env = append(cmd.Env, "GO111MODULE=on")
+		return cmd, nil
 	case "rust":
 		return exec.Command("cargo", "script", filename), nil
 	case "ruby":

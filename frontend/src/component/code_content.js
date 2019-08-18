@@ -5,8 +5,8 @@ import { deleteCodeApi } from "../api";
 const CodeContent = props => {
   const c = props.code;
 
-  const uid = props.get_user ? props.get_user.uid : null;
-  const firebase_uid = props.login_user ? props.login_user.firebase_uid : null;
+  const uid = props.get_user ? props.get_user.firebase_uid: null;
+  const firebase_uid = props.login_user ? props.login_user.uid: null;
 
   const content = props.is_ommit
     ? c.body.slice(0, 300) + (c.body.length > 300 ? "\n......\nomitted" : "")
@@ -56,7 +56,7 @@ const CodeContent = props => {
         <br />
         <small>{new Date(c.created_at).toDateString()}</small>
       </p>
-      {uid !== null && uid === firebase_uid ? <Links /> : <div />}
+      {uid !== null && uid !== undefined && uid === firebase_uid ? <Links /> : <div />}
       <pre className="prettyprint">
         <code>{content}</code>
       </pre>
