@@ -1,10 +1,14 @@
 package service
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
+	"os/exec"
+	"path"
 
 	"github.com/k-nasa/code-hub/model"
 )
@@ -22,7 +26,7 @@ func (c *Compile) Run(compile *model.Compile) (*model.CompileResult, error) {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	tmpFile, err := ioutil.TempFile(tmpDir, "ioutil")
+	tmpFile, err := os.Create(tmpDir + "/exec.go")
 	if err != nil {
 		return nil, fmt.Errorf("error creating temp file: %v", err)
 	}
@@ -34,23 +38,50 @@ func (c *Compile) Run(compile *model.Compile) (*model.CompileResult, error) {
 		return nil, fmt.Errorf("error write code: %v", err)
 	}
 
-	filepath := tmpFile.Name()
+	var cmd *exec.Cmd
+	filename := path.Base(tmpFile.Name())
 
-	// ここでコマンド実行する
 	switch compile.Language {
 	case "golang":
-		return nil, nil
+		cmd = exec.Command("ruby", filename)
 	case "rust":
-		return nil, nil
+		cmd = exec.Command("ruby", filename)
 	case "ruby":
-		return nil, nil
+		cmd = exec.Command("ruby", filename)
 	default:
 		return nil, errors.New("unsupported language")
 	}
 
-	// 実行結果を取得する
+	result := createResult(cmd, compile, tmpDir)
 
-	// status みてOKか判定する
+	return result, nil
+}
 
-	// オブジェクトを作成して返す
+func createResult(cmd *exec.Cmd, compile *model.Compile, tmpDir string) *model.CompileResult {
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	cmd.Dir = tmpDir
+
+	err := cmd.Run()
+
+	if err != nil {
+		log.Println(fmt.Sprint(err) + ": " + stderr.String())
+		result := &model.CompileResult{
+			Language:     compile.Language,
+			Ok:           false,
+			ErrorMessage: stderr.String(),
+		}
+
+		return result
+	}
+
+	return &model.CompileResult{
+		Language: compile.Language,
+		Ok:       false,
+		Output:   out.String(),
+	}
+
 }
