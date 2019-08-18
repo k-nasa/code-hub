@@ -38,20 +38,8 @@ func (c *Compile) Run(compile *model.Compile) (*model.CompileResult, error) {
 		return nil, fmt.Errorf("error write code: %v", err)
 	}
 
-	var cmd *exec.Cmd
 	filename := path.Base(tmpFile.Name())
-
-	switch compile.Language {
-	case "golang":
-		cmd = exec.Command("go", "run", filename)
-		cmd.Env = []string{"GO111MODULE=on"}
-	case "rust":
-		cmd = exec.Command("cargo", "script", filename)
-	case "ruby":
-		cmd = exec.Command("ruby", filename)
-	default:
-		return nil, errors.New("unsupported language")
-	}
+	cmd, err := languageCmd(compile, filename)
 
 	result := createResult(cmd, compile, tmpDir)
 
@@ -83,6 +71,20 @@ func createResult(cmd *exec.Cmd, compile *model.Compile, tmpDir string) *model.C
 		Language: compile.Language,
 		Ok:       true,
 		Output:   out.String(),
+	}
+
+}
+
+func languageCmd(compile *model.Compile, filename string) (*exec.Cmd, error) {
+	switch compile.Language {
+	case "golang":
+		return exec.Command("go", "run", filename), nil
+	case "rust":
+		return exec.Command("cargo", "script", filename), nil
+	case "ruby":
+		return exec.Command("ruby", filename), nil
+	default:
+		return nil, errors.New("unsupported language")
 	}
 
 }
