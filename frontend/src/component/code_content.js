@@ -16,9 +16,6 @@ const CodeContent = props => {
       <pre className="prettyprint">
         <code>{c.body}</code>
       </pre>
-      <pre className="prettyprint">
-        <code>puts("hello world")</code>
-      </pre>
     </div>
   );
 };

@@ -27,9 +27,6 @@ const App = () => {
 
   return (
     <div>
-      <pre className="prettyprint">
-        <code>puts("hello world")</code>
-      </pre>
       <Router>
         <HeaderMenue />
         <ErrorMessage
