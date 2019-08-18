@@ -12,7 +12,7 @@ const WriteCode = props => {
   const [status, setStatus] = useState("public");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [compileResult, setCompileResult] = useState({})
+  const [compileResult, setCompileResult] = useState({});
 
   const submitCode = async () => {
     const user_id = await props.user.getIdToken();
@@ -40,20 +40,20 @@ const WriteCode = props => {
       setCompileResult(e.toString())
     );
 
-    const json = await res.json()
+    const json = await res.json();
 
-    if(!json.ok) {
+    if (!json.ok) {
       setCompileResult({
         ok: false,
         message: json.error_message
-      })
-      return
+      });
+      return;
     }
 
-      setCompileResult({
-        ok: true,
-        message: json.output
-      });
+    setCompileResult({
+      ok: true,
+      message: json.output
+    });
   };
 
   const setSavingError = () => {
@@ -82,28 +82,29 @@ const WriteCode = props => {
     </div>
   );
 
-  const compileStatus = (ok)  => {
-    if(ok === null || ok === undefined) {
-      return ""
+  const compileStatus = ok => {
+    if (ok === null || ok === undefined) {
+      return "";
     }
 
-    return(ok ? "is-success" : "is-danger")
-  }
+    return ok ? "is-success" : "is-danger";
+  };
 
   const CompileOutput = () => (
     <div style={{ paddingTop: "20px" }}>
       <div className="control">
-        <textarea className={`textarea ${compileStatus(compileResult.ok)}`} readOnly value={compileResult.message} />
+        <textarea
+          className={`textarea ${compileStatus(compileResult.ok)}`}
+          readOnly
+          value={compileResult.message}
+        />
       </div>
     </div>
   );
 
   return (
     <div>
-      <ErrorMessage
-        error={errorMessage}
-        handler={() => setErrorMessage("")}
-      />
+      <ErrorMessage error={errorMessage} handler={() => setErrorMessage("")} />
 
       <SuccessMessage
         message={successMessage}
@@ -151,21 +152,21 @@ const FooterButton = props => (
   </div>
 );
 
-  const TextEditor = (props) => (
-    <div>
-      <input
-        style={{ padding: "30px", marginBottom: "20px" }}
-        onChange={props.changeTitle}
-        placeholder="A great title for this code"
-        value={props.title}
-        className="input is-large"
-        type="text"
-      />
-      <textarea
-        onChange={props.changeBody}
-        value={props.body}
-        placeholder="Great code here!"
-        className="textarea is-info"
-      />
-    </div>
-  );
+const TextEditor = props => (
+  <div>
+    <input
+      style={{ padding: "30px", marginBottom: "20px" }}
+      onChange={props.changeTitle}
+      placeholder="A great title for this code"
+      value={props.title}
+      className="input is-large"
+      type="text"
+    />
+    <textarea
+      onChange={props.changeBody}
+      value={props.body}
+      placeholder="Great code here!"
+      className="textarea is-info"
+    />
+  </div>
+);

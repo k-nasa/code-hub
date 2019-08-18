@@ -1,6 +1,5 @@
 import React from "react";
-import './style.css';
-
+import "./style.css";
 
 import ErrorMessage from "./component/error_message";
 import Index from "./pages/index";
@@ -37,10 +36,7 @@ const App = () => {
         <br />
         <Switch>
           <Route exact path="/" exact render={() => <Index user={user} />} />
-          <Route
-            path="/write_code"
-            render={() => <WriteCode user={user} />}
-          />
+          <Route path="/write_code" render={() => <WriteCode user={user} />} />
           <Route
             path="/user/:id"
             render={p => <ShowUser user={user} p={p} />}

@@ -16,7 +16,6 @@ const Index = props => {
     init();
   }, []);
 
-
   const init = async () => {
     const res = await fetchCodes().catch(e => {
       setErrorMessage(e.toString());
@@ -56,7 +55,7 @@ const Index = props => {
                   </Link>
                 </h2>
               </div>
-              <CodeContent code={c} is_ommit={true}/>
+              <CodeContent code={c} is_ommit={true} />
             </div>
           </article>
         );
