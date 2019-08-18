@@ -51,3 +51,16 @@ export const getCode = (username, title) => {
     return res;
   });
 };
+
+export const compileCode = (language, body) => {
+  return fetch(`${endpoint}/compile`, {
+    method: "POST",
+    body: JSON.stringify({
+      language: language,
+      body: body
+    }),
+    credentials: "same-origin"
+  }).then(res => {
+    return res;
+  });
+};

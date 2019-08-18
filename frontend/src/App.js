@@ -1,4 +1,6 @@
 import React from "react";
+import './style.css';
+
 
 import ErrorMessage from "./component/error_message";
 import Index from "./pages/index";
@@ -6,7 +8,7 @@ import ShowUser from "./pages/show_user";
 import ShowCode from "./pages/show_code";
 import WriteCode from "./pages/write_code";
 import firebase from "./firebase";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 const App = () => {
@@ -25,6 +27,9 @@ const App = () => {
 
   return (
     <div>
+      <pre className="prettyprint">
+        <code>puts("hello world")</code>
+      </pre>
       <Router>
         <HeaderMenue />
         <ErrorMessage
@@ -33,26 +38,18 @@ const App = () => {
         />
 
         <br />
-        <Route exact path="/" exact render={() => <Index user={user} />} />
-        <Route
-          exact
-          path="/write_code"
-          render={() => <WriteCode user={user} />}
-        />
-        <Route
-          exact
-          path="/user/:id"
-          render={p => <ShowUser user={user} p={p} />}
-        />
-        {
-          // TODO 本当は /:username/:titleでやりたいが、/user:idがマッチしなくなってしまう
-          // 上から順にルーティングされるようではないみたいだ
-        }
-        <Route
-          exact
-          path="/codes/:username/:title"
-          render={p => <ShowCode p={p} />}
-        />
+        <Switch>
+          <Route exact path="/" exact render={() => <Index user={user} />} />
+          <Route
+            path="/write_code"
+            render={() => <WriteCode user={user} />}
+          />
+          <Route
+            path="/user/:id"
+            render={p => <ShowUser user={user} p={p} />}
+          />
+          <Route path="/:username/:title" render={p => <ShowCode p={p} />} />
+        </Switch>
       </Router>
     </div>
   );

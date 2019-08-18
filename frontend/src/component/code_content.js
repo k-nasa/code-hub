@@ -7,14 +7,17 @@ const CodeContent = props => {
   return (
     <div>
       <p>
-        <Link to={`/codes/${c.username}/${c.title}`}>
+        <Link to={`/${c.username}/${c.title}`}>
           <strong>{c.title}</strong>
         </Link>
         <br />
         <small>{new Date(c.created_at).toDateString()}</small>
       </p>
-      <pre>
+      <pre className="prettyprint">
         <code>{c.body}</code>
+      </pre>
+      <pre className="prettyprint">
+        <code>puts("hello world")</code>
       </pre>
     </div>
   );
