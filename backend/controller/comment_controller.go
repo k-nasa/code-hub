@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -47,6 +48,7 @@ func (c *Comment) Create(w http.ResponseWriter, r *http.Request) (int, interface
 	}
 
 	comment, err := repository.FindComment(c.db, id)
+	fmt.Printf("%v", comment)
 
 	return http.StatusCreated, comment, nil
 }

@@ -26,7 +26,7 @@ func AllComments(db *sqlx.DB, codeID int64) ([]model.CommentWithUser, error) {
 func FindComment(db *sqlx.DB, id int64) (*model.CommentWithUser, error) {
 	code := model.CommentWithUser{}
 
-	if err := db.Get(&code, `SELECT codes.*, icon_url, username FROM codes inner join users on codes.user_id = users.id WHERE id = ? LIMIT 1`, id); err != nil {
+	if err := db.Get(&code, `SELECT comments.*, icon_url, username FROM comments inner join users on comments.user_id = users.id WHERE comments.id = ? LIMIT 1`, id); err != nil {
 		return nil, err
 	}
 	return &code, nil
