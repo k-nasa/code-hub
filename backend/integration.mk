@@ -5,9 +5,10 @@ PORT := 1991
 HOST := localhost
 TOKEN_FILE := .idToken
 
-CODE_ID :=1
+CODE_ID :=27
 USER_ID :=27
 CODE_TITLE:=俺が考え強のコード9
+COMMENT_BODY:=すごいね、、、
 CODE_BODY:=unc AllCodesWithUsedb *sqlx.DB) ([]model.CodeWithUser, error) {
 CODE_STATUS:=public
 LANGUAGE:=golang
@@ -37,6 +38,12 @@ req-users-code:
 
 req-code-by-title:
 	curl -v $(HOST):$(PORT)/nasa/$(CODE_TITLE)
+
+req-code-comments:
+	curl -v $(HOST):$(PORT)/codes/$(CODE_ID)/comments
+
+req-comment-post:
+	curl -v -XPOST -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/comments -d '{"code_id": $(CODE_ID), "body": "$(COMMENT_BODY)" }'
 
 req-private:
 	curl -v -H "Authorization: Bearer $(shell cat ./$(TOKEN_FILE))" $(HOST):$(PORT)/private

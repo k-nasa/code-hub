@@ -78,6 +78,7 @@ func (s *Server) Route() *mux.Router {
 	)
 
 	authChain := commonChain.Append(
+		corsMiddleware.Handler,
 		authMiddleware.Handler,
 	)
 
@@ -93,6 +94,10 @@ func (s *Server) Route() *mux.Router {
 	r.Methods(http.MethodGet).Path("/codes").Handler(commonChain.Then(AppHandler{codeController.Index}))
 	r.Methods(http.MethodGet).Path("/codes/{id}").Handler(commonChain.Then(AppHandler{codeController.Show}))
 	r.Methods(http.MethodDelete).Path("/codes/{id}").Handler(authChain.Then(AppHandler{codeController.Delete}))
+
+	commentController := controller.NewComment(s.db)
+	r.Methods(http.MethodPost).Path("/comments").Handler(authChain.Then(AppHandler{commentController.Create}))
+	r.Methods(http.MethodGet).Path("/codes/{id}/comments").Handler(commonChain.Then(AppHandler{commentController.Index}))
 
 	// FIXME urlとIndexWithUserっていうのが微妙、、、
 	r.Methods(http.MethodGet).Path("/users/codes").Handler(commonChain.Then(AppHandler{codeController.IndexWithUser}))

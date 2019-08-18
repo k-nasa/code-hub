@@ -76,3 +76,28 @@ export const deleteCodeApi = (idToken, id) => {
     return res;
   });
 };
+
+export const getCommentsApi = code_id => {
+  return fetch(`${endpoint}/codes/${code_id}/comments`).then(res => {
+    if (!res.ok) {
+      throw Error(`Request rejected with status ${res.status}`);
+    }
+    return res;
+  });
+};
+
+export const postCommentApi = (idToken, code_id, body) => {
+  return fetch(`${endpoint}/comments`, {
+    method: "POST",
+    headers: new Headers({
+      Authorization: `Bearer ${idToken}`
+    }),
+    body: JSON.stringify({
+      code_id: code_id,
+      body: body
+    }),
+    credentials: "same-origin"
+  }).then(res => {
+    return res;
+  });
+};
