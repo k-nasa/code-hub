@@ -20,11 +20,11 @@ func (c *Code) Create(newCode *model.Code) (*model.Code, error) {
 	code := &model.Code{}
 
 	if err := dbutil.TXHandler(c.db, func(tx *sqlx.Tx) error {
-		if foudCode, _ := repository.FindCodeByUserIdAndTitle(tx, newCode.UserID, newCode.Title); foudCode != nil {
-
-			return &dbutil.DuplicationCodeError{}
-		}
-
+		// if foudCode, _ := repository.FindCodeByUserIdAndTitle(tx, newCode.UserID, newCode.Title); foudCode != nil {
+		//
+		// 	return &dbutil.DuplicationCodeError{}
+		// }
+		//
 		result, err := repository.CreateCode(tx, newCode)
 		if err != nil {
 			return err

@@ -62,6 +62,11 @@ func FindUserCodes(db *sqlx.DB, user_id int64) ([]*model.Code, error) {
 }
 
 func CreateCode(db *sqlx.Tx, code *model.Code) (sql.Result, error) {
-	return db.Exec(`insert into codes(user_id, title, body, status) values(?, ?, ?, ?)`,
-		code.UserID, code.Title, code.Body, code.Status)
+	return db.Exec(`
+insert into
+codes(user_id, title, body, status)
+values(?, ?, ?, ?)
+ON DUPLICATE KEY
+UPDATE title = ?, body = ?, status = ?
+	`, code.UserID, code.Title, code.Body, code.Status, code.Title, code.Body, code.Status)
 }
