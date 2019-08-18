@@ -62,6 +62,14 @@ func (s *Server) Route() *mux.Router {
 	corsMiddleware := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedHeaders: []string{"Authorization"},
+		AllowedMethods: []string{
+			http.MethodHead,
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+		},
 	})
 
 	commonChain := alice.New(
@@ -84,6 +92,7 @@ func (s *Server) Route() *mux.Router {
 	r.Methods(http.MethodPost).Path("/codes").Handler(authChain.Then(AppHandler{codeController.Create}))
 	r.Methods(http.MethodGet).Path("/codes").Handler(commonChain.Then(AppHandler{codeController.Index}))
 	r.Methods(http.MethodGet).Path("/codes/{id}").Handler(commonChain.Then(AppHandler{codeController.Show}))
+	r.Methods(http.MethodDelete).Path("/codes/{id}").Handler(authChain.Then(AppHandler{codeController.Delete}))
 
 	// FIXME urlとIndexWithUserっていうのが微妙、、、
 	r.Methods(http.MethodGet).Path("/users/codes").Handler(commonChain.Then(AppHandler{codeController.IndexWithUser}))

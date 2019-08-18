@@ -56,11 +56,7 @@ const Index = props => {
                   </Link>
                 </h2>
               </div>
-              <CodeContent
-                code={c}
-                is_ommit={true}
-                show_edit={uid === c.firebase_uid}
-              />
+              <CodeContent code={c} is_ommit={true} />
             </div>
           </article>
         );

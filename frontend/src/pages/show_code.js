@@ -14,6 +14,7 @@ const ShowCode = props => {
   const [code, setCode] = useState({});
 
   const [errorMessage, setErrorMessage] = useState("");
+  const uid = props.user ? props.user.uid : null;
 
   useEffect(() => {
     fetchCode().catch(e => setErrorMessage(e.toString()));
@@ -44,7 +45,11 @@ const ShowCode = props => {
               </Link>
             </h2>
           </div>
-          {code ? <CodeContent code={code} /> : <div />}
+          {code ? (
+            <CodeContent code={code} show_edit={uid === code.firebase_uid} />
+          ) : (
+            <div />
+          )}
         </div>
       </article>
     </div>

@@ -44,7 +44,10 @@ const App = () => {
             path="/user/:id"
             render={p => <ShowUser user={user} p={p} />}
           />
-          <Route path="/:username/:title" render={p => <ShowCode p={p} />} />
+          <Route
+            path="/:username/:title"
+            render={p => <ShowCode p={p} user={user} />}
+          />
         </Switch>
       </Router>
     </div>

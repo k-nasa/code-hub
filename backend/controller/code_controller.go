@@ -52,6 +52,31 @@ func (c *Code) Show(w http.ResponseWriter, r *http.Request) (int, interface{}, e
 	return http.StatusOK, code, nil
 }
 
+func (c *Code) Delete(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+	vars := mux.Vars(r)
+	id, ok := vars["id"]
+	if !ok {
+		return http.StatusBadRequest, nil, &httputil.HTTPError{Message: "invalid path parameter"}
+	}
+
+	codeID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return http.StatusBadRequest, nil, err
+	}
+
+	user, err := httputil.GetUserFromContext(r.Context())
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	_, err = repository.DeleteCode(c.db, codeID, user.ID)
+	if err != nil {
+		return http.StatusInternalServerError, nil, err
+	}
+
+	return http.StatusNoContent, nil, nil
+}
+
 func (c *Code) Create(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
 	newCode := &model.Code{}
 

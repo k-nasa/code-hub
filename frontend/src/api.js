@@ -64,3 +64,15 @@ export const compileCode = (language, body) => {
     return res;
   });
 };
+
+export const deleteCodeApi = (idToken, id) => {
+  return fetch(`${endpoint}/codes/${id}`, {
+    method: "DELETE",
+    headers: new Headers({
+      Authorization: `Bearer ${idToken}`
+    }),
+    credentials: "same-origin"
+  }).then(res => {
+    return res;
+  });
+};

@@ -70,3 +70,7 @@ ON DUPLICATE KEY
 UPDATE title = ?, body = ?, status = ?
 	`, code.UserID, code.Title, code.Body, code.Status, code.Title, code.Body, code.Status)
 }
+
+func DeleteCode(db *sqlx.DB, code_id, user_id int64) (sql.Result, error) {
+	return db.Exec(`delete from codes where user_id = ? and id = ?`, user_id, code_id)
+}
