@@ -20,7 +20,7 @@ SELECT id, firebase_uid, username, email, icon_url FROM users WHERE firebase_uid
 func GetUserById(db *sqlx.DB, id int64) (*model.User, error) {
 	var u model.User
 	if err := db.Get(&u, `
-SELECT id, username, email, icon_url FROM users WHERE id = ?`, id); err != nil {
+SELECT id, username, firebase_uid, email, icon_url FROM users WHERE id = ?`, id); err != nil {
 		return nil, err
 	}
 	return &u, nil

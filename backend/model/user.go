@@ -4,7 +4,7 @@ import "time"
 
 type User struct {
 	ID          int64     `db:"id" json:"id"`
-	FirebaseUID string    `db:"firebase_uid"`
+	FirebaseUID string    `db:"firebase_uid" json:"firebase_uid"`
 	Email       string    `db:"email" json:"email"`
 	Username    string    `db:"username" json:"username"`
 	IconUrl     string    `db:"icon_url" json:"icon_url"`

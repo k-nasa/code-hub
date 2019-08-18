@@ -12,6 +12,8 @@ const ShowUser = props => {
 
   const [errorMessage, setErrorMessage] = useState("");
 
+  const display_name = props.user ? props.user.displayName : null;
+
   useEffect(() => {
     fetchCodes().then(json => {
       setCodes(json.codes);
@@ -49,7 +51,11 @@ const ShowUser = props => {
                 <article className="media">
                   <div className="media-content">
                     <div className="content">
-                      <CodeContent code={c} is_ommit={true} />
+                      <CodeContent
+                        code={c}
+                        is_ommit={true}
+                        show_edit={display_name === c.username}
+                      />
                     </div>
                   </div>
                 </article>

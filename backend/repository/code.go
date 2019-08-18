@@ -17,7 +17,7 @@ func AllCodes(db *sqlx.DB) ([]model.Code, error) {
 
 func AllCodesWithUser(db *sqlx.DB) ([]model.CodeWithUser, error) {
 	c := make([]model.CodeWithUser, 0)
-	if err := db.Select(&c, `select codes.id, title, body, status, codes.created_at, codes.updated_at, user_id, username, icon_url from codes inner join users on users.id = codes.user_id order by codes.updated_at desc`); err != nil {
+	if err := db.Select(&c, `select codes.id, title, body, status, codes.created_at, codes.updated_at, user_id, firebase_uid, username, icon_url from codes inner join users on users.id = codes.user_id order by codes.updated_at desc`); err != nil {
 		return nil, err
 	}
 	return c, nil
@@ -35,7 +35,7 @@ func FindCode(db *sqlx.DB, id int64) (*model.Code, error) {
 func FindCodeByUserAndTitle(db *sqlx.DB, username, title string) (*model.CodeWithUser, error) {
 	code := model.CodeWithUser{}
 
-	if err := db.Get(&code, `select codes.*, username, icon_url from codes inner join users on users.username = ? where title = ? limit 1`, username, title); err != nil {
+	if err := db.Get(&code, `select codes.*, firebase_uid, username, icon_url from codes inner join users on users.username = ? where title = ? limit 1`, username, title); err != nil {
 		return nil, err
 	}
 

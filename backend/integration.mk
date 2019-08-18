@@ -6,7 +6,7 @@ HOST := localhost
 TOKEN_FILE := .idToken
 
 CODE_ID :=1
-USER_ID :=1
+USER_ID :=27
 CODE_TITLE:=俺が考え強のコード9
 CODE_BODY:=unc AllCodesWithUsedb *sqlx.DB) ([]model.CodeWithUser, error) {
 CODE_STATUS:=public

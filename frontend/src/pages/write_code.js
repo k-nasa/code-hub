@@ -6,8 +6,12 @@ import { postCode, handleError, compileCode } from "../api";
 import { useState } from "react";
 
 const WriteCode = props => {
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+  const state = props.p.location.state || {};
+  const t = state.title ? state.title : "";
+  const b = state.body ? state.body : "";
+
+  const [title, setTitle] = useState(t);
+  const [body, setBody] = useState(b);
   const [language, setLanguage] = useState("rust");
   const [status, setStatus] = useState("public");
   const [errorMessage, setErrorMessage] = useState("");

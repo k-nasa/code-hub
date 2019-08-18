@@ -36,7 +36,10 @@ const App = () => {
         <br />
         <Switch>
           <Route exact path="/" exact render={() => <Index user={user} />} />
-          <Route path="/write_code" render={() => <WriteCode user={user} />} />
+          <Route
+            path="/write_code"
+            render={p => <WriteCode p={p} user={user} />}
+          />
           <Route
             path="/user/:id"
             render={p => <ShowUser user={user} p={p} />}

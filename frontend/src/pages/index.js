@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 const Index = props => {
   const [codes, setCodes] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const uid = props.user ? props.user.uid : null;
 
   useEffect(() => {
     init();
@@ -55,15 +56,15 @@ const Index = props => {
                   </Link>
                 </h2>
               </div>
-              <CodeContent code={c} is_ommit={true} />
+              <CodeContent
+                code={c}
+                is_ommit={true}
+                show_edit={uid === c.firebase_uid}
+              />
             </div>
           </article>
         );
       })}
-
-      <pre className="prettyprint">
-        <code>puts("hello world")</code>
-      </pre>
       {props.user ? (
         <Link to="write_code">
           <FooterButton text="Write code!!" />
