@@ -16,7 +16,7 @@ const ShowCode = props => {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    fetchCode();
+    fetchCode().catch(e => setErrorMessage(e.toString()));
   }, []);
 
   const fetchCode = async () => {

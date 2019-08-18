@@ -2,10 +2,8 @@ import React from "react";
 
 import CodeContent from "../component/code_content";
 import ErrorMessage from "../component/error_message";
-import SuccessMessage from "../component/success_message";
 import UserIcon from "../component/user_icon";
-import { Link } from "react-router-dom";
-import { fetchUserCodes, handleError } from "../api";
+import { fetchUserCodes } from "../api";
 import { useState, useEffect } from "react";
 
 const ShowUser = props => {

@@ -8,8 +8,6 @@ import { Link } from "react-router-dom";
 import { fetchCodes } from "../api";
 import { useState, useEffect } from "react";
 
-const endpoint = process.env.REACT_APP_ENDPOINT_HOST;
-
 const Index = props => {
   const [codes, setCodes] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");

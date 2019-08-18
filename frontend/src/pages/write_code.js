@@ -4,7 +4,6 @@ import ErrorMessage from "../component/error_message";
 import SuccessMessage from "../component/success_message";
 import { postCode, handleError } from "../api";
 import { useState } from "react";
-import { compile } from "path-to-regexp";
 
 const WriteCode = props => {
   const [title, setTitle] = useState("");

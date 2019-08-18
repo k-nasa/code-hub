@@ -6,6 +6,7 @@ const UserIcon = props => (
       src={
         props.icon_url ? props.icon_url : process.env.REACT_APP_DUMMY_ICON_URL
       }
+      alt="user icon"
     />
   </p>
 );
