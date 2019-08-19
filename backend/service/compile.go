@@ -26,7 +26,7 @@ func (c *Compile) Run(compile *model.Compile) (*model.CompileResult, error) {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	tmpFile, err := os.Create(tmpDir + "/exec.go")
+	tmpFile, err := os.Create(tmpDir + "/main.go")
 	if err != nil {
 		return nil, fmt.Errorf("error creating temp file: %v", err)
 	}
@@ -79,7 +79,7 @@ func languageCmd(compile *model.Compile, filename string) (*exec.Cmd, error) {
 	switch compile.Language {
 	case "golang":
 		cmd := exec.Command("go", "run", filename)
-		cmd.Env = append(cmd.Env, "GO111MODULE=on")
+		cmd.Env = append(cmd.Env, "GO111MODULE=off")
 		return cmd, nil
 	case "rust":
 		return exec.Command("cargo", "script", filename), nil
