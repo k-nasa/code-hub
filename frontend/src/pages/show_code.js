@@ -51,6 +51,15 @@ const ShowCode = props => {
   };
 
   const postComment = async () => {
+    if(newComment === "") {
+      setErrorMessage("Please input commnet");
+      return
+    }
+
+    if(props.user === null) {
+      setErrorMessage("Please login");
+      return
+    }
     const user_id = await props.user.getIdToken();
     const res = await postCommentApi(user_id, code.id, newComment);
 
@@ -111,22 +120,27 @@ const ShowCode = props => {
   );
 
   return (
-    <div style={{ padding: "16px" }}>
-      <ErrorMessage error={errorMessage} handler={() => setErrorMessage("")} />
-      <ShowCode />
-
-      <Comments />
-      <CommentInput
-        clickHandler={() => postComment()}
-        textHandler={e => setNewComment(e.target.value)}
-        commentContent={newComment}
+    <div>
+      <ErrorMessage
+        error={errorMessage}
+        handler={() => setErrorMessage("")}
       />
+      <div style={{ padding: "16px" }}>
+        <ShowCode />
+
+        <Comments />
+        <CommentInput
+          clickHandler={() => postComment()}
+          textHandler={e => setNewComment(e.target.value)}
+          commentContent={newComment}
+        />
+      </div>
     </div>
   );
 };
 
 const CommentInput = props => (
-  <div style={{ padding: "24px" }} class="media-content">
+  <div style={{ padding: "24px" }} className="media-content">
     <div className="field">
       <p className="control">
         <textarea

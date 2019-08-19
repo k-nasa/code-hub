@@ -40,11 +40,18 @@ const WriteCode = props => {
   };
 
   const runCode = async () => {
+    if(!body) {
+      return
+    }
     const res = await compileCode(language, body).catch(e =>
       setCompileResult(e.toString())
     );
 
     const json = await res.json();
+
+    if(!json) {
+      return
+    }
 
     if (!json.ok) {
       setCompileResult({
